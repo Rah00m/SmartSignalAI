@@ -1,0 +1,127 @@
+/* الحاوية الرئيسية */
+.mode1-container {
+     overflow-x: hidden;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 20px auto;
+  height: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* العنوان الرئيسي */
+.mode1-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #e11d48;
+  text-align: center;
+}
+
+/* الحاوية التي تحتوي على التحكمات (المدخلات) */
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* تنسيق التسمية */
+.control-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* الحقول المدخلة و الـ select */
+.control-input,
+.control-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* زر الفتح */
+.control-button {
+  background-color: #facc15;
+  color: #1e3a8a;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.control-button:hover {
+  background-color: #eab308;
+}
+
+/* الحاوية التي تحتوي على الرسم */
+.plot-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.mode1-loading {
+  font-style: italic;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* تصميم عام للصفحة */
+body {
+  background-color: #1e3a8a;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+/* تصميم لتوزيع العناصر بشكل مرن */
+.mode1-flex {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* للتعامل مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .mode1-container {
+    margin: 20px;
+    padding: 15px;
+    height: auto;
+  }
+
+  .plot-container {
+    width: 100%;
+  }
+
+  .controls-container {
+    width: 100%;
+  }
+
+  .control-button {
+    width: 100%;
+  }
+}
