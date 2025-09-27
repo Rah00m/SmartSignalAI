@@ -1,0 +1,101 @@
+
+.mode1-container {
+  overflow-x: hidden;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 20px auto;
+  min-height: 650px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mode1-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #e11d48;
+  text-align: center;
+}
+
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.control-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.control-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.plot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+
+@media (max-width: 768px) {
+  .mode1-container {
+    margin: 20px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  .plot-container {
+    width: 100%;
+  }
+
+  .controls-container {
+    width: 100%;
+  }
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #facc15;
+  color: #1e3a8a;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease-in-out;
+  text-decoration: none;
+}
+
+.back-button:hover {
+  background-color: #eab308;
+  transform: scale(1.03);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.back-button:active {
+  transform: scale(0.98);
+}

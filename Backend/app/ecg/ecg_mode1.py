@@ -1,34 +1,102 @@
+# from fastapi import APIRouter
+# import wfdb
+# import pandas as pd
+
+# router = APIRouter()
+
+# @router.get("/channels")
+# def get_channels():
+#     record = wfdb.rdrecord('100', pn_dir='mitdb')
+#     return {"channels": record.sig_name}
+
+
+# @router.get("/signal")
+# def get_signal(channel: str = "MLII", offset: int = 0, length: int = 3000):
+#     record = wfdb.rdrecord('100', pn_dir='mitdb')
+#     df = pd.DataFrame(record.p_signal, columns=record.sig_name)
+
+#     if channel not in df.columns:
+#         return {"error": f"Invalid channel name: {channel}"}
+
+#     y = df[channel][offset:offset+length].tolist()
+#     x = list(range(offset, offset + len(y)))
+
+#     return {
+#         "channel": channel,
+#         "offset": offset,
+#         "length": length,
+#         "x": x,
+#         "y": y
+#     }
+
+# # uvicorn app.main:app --reload
+# # http://127.0.0.1:8000/ecg/mode1/channels
+# # http://127.0.0.1:8000/ecg/mode1/signal?channel=MLII&offset=0&length=3000
+
+
 from fastapi import APIRouter
 import wfdb
 import pandas as pd
+import os
 
 router = APIRouter()
 
+BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\ptb-diagnostic-ecg-database-1.0.0"
+
+def get_diagnosis(patient: str, recording: str):
+    hea_path = os.path.join(BASE_PATH, patient, f"{recording}.hea")
+    diagnosis_lines = []
+    if os.path.exists(hea_path):
+        with open(hea_path, "r", encoding="utf-8", errors="ignore") as f:
+            capture = False
+            for line in f:
+                if line.startswith("# Diagnose:"):
+                    capture = True
+                    diagnosis_lines.append(line.strip("# ").strip())
+                elif capture:
+                    if line.startswith("#") and line.strip() != "#":
+                        diagnosis_lines.append(line.strip("# ").strip())
+                    else:
+                        break
+    else:
+        return "Diagnosis file not found."
+    
+    return "\n".join(diagnosis_lines) if diagnosis_lines else "No diagnosis found."
+
+
 @router.get("/channels")
-def get_channels():
-    record = wfdb.rdrecord('100', pn_dir='mitdb')
+def get_channels(patient: str, recording: str):
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    record = wfdb.rdrecord(record_path)
+
     return {"channels": record.sig_name}
 
 
 @router.get("/signal")
-def get_signal(channel: str = "MLII", offset: int = 0, length: int = 3000):
-    record = wfdb.rdrecord('100', pn_dir='mitdb')
-    df = pd.DataFrame(record.p_signal, columns=record.sig_name)
+def get_signal(patient: str, recording: str, channel: str, offset: int = 0, length: int = 3000):
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    record = wfdb.rdrecord(record_path)
 
-    if channel not in df.columns:
+    if channel not in record.sig_name:
         return {"error": f"Invalid channel name: {channel}"}
 
+    df = pd.DataFrame(record.p_signal, columns=record.sig_name)
     y = df[channel][offset:offset+length].tolist()
     x = list(range(offset, offset + len(y)))
 
+    diagnosis = get_diagnosis(patient, recording)
+
     return {
+        "patient": patient,
+        "recording": recording,
         "channel": channel,
         "offset": offset,
         "length": length,
+        "diagnosis": diagnosis,
         "x": x,
         "y": y
     }
 
-# uvicorn app.main:app --reload
-# http://127.0.0.1:8000/ecg/mode1/channels
-# http://127.0.0.1:8000/ecg/mode1/signal?channel=MLII&offset=0&length=3000
+# مثال للروابط:
+# http://127.0.0.1:8000/ecg/mode1/signal?patient=patient001&recording=s0010_re&channel=i&offset=0&length=3000
+# http://127.0.0.1:8000/ecg/mode1/channels?patient=patient001&recording=s0010_re
