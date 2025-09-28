@@ -49,6 +49,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Mode1 from "./components/ECG/mode1";
+import Mode3 from "./components/ECG/mode3";
 import ECGHome from "./components/ECG/ecg_home"; // الصفحة الرئيسية
 import { ECGProvider } from './components/ECG/ecgContext'; // استيراد ECGProvider
 import Mode4 from "./components/ECG/mode4";  // مثال مود آخر
@@ -77,6 +78,7 @@ function App() {
 
           {/* روابط المودات الأخرى */}
           <Route path="/mode4" element={<Mode4 signalData={signalData} />} />
+          <Route path="/mode3" element={<Mode3 signalData={signalData} />} />
         </Routes>
       </Router>
     </ECGProvider>

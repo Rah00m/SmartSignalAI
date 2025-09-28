@@ -1,399 +1,119 @@
-
-// import React, { useState, useEffect } from "react";
-// import Plot from "react-plotly.js";
-// import "./mode1.css";
-// import { useNavigate } from "react-router-dom";
-
-// export default function Mode1({ onDataFetched }) {
-//     const navigate = useNavigate();
-//   const [patients, setPatients] = useState([]);
-//   const [selectedPatient, setSelectedPatient] = useState("");
-//   const [recordings, setRecordings] = useState([]);
-//   const [selectedRecording, setSelectedRecording] = useState("");
-
-//   const [channel, setChannel] = useState("I");
-//   const [length, setLength] = useState(200);
-//   const [offset, setOffset] = useState(0);
-
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(false);
-
-//   // Get all patients on load
-//   useEffect(() => {
-//     const fetchPatients = async () => {
-//       console.log("Fetching patients...");
-//       try {
-//         const res = await fetch(`${import.meta.env.VITE_API_URL}/ecg/mode1/patients`);
-//         const json = await res.json();
-//         console.log("Patients fetched:", json);
-//         if (json.patients) {
-//           setPatients(json.patients);
-//           console.log("Patients state updated:", json.patients);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching patients:", error);
-//       }
-//     };
-
-//     fetchPatients();
-//   }, []);
-
-//   // Get recordings when patient is selected
-//   useEffect(() => {
-//     if (!selectedPatient) {
-//       console.log("No patient selected yet.");
-//       setRecordings([]);
-//       setSelectedRecording("");
-//       return;
-//     }
-
-//     const fetchRecordings = async () => {
-//       console.log(`Fetching recordings for patient: ${selectedPatient}`);
-//       try {
-//         const res = await fetch(`${import.meta.env.VITE_API_URL}/ecg/mode1/records?patient=${selectedPatient}`);
-//         const json = await res.json();
-//         console.log("Recordings fetched:", json);
-//         if (json.records) {
-//           const recs = json.records.map((r) => r.recording);
-//           setRecordings(recs);
-//           console.log("Recordings state updated:", recs);
-//           setSelectedRecording("");
-//         } else {
-//           setRecordings([]);
-//           setSelectedRecording("");
-//           console.log("No recordings found for this patient.");
-//         }
-//       } catch (error) {
-//         console.error("Error fetching recordings:", error);
-//         setRecordings([]);
-//         setSelectedRecording("");
-//       }
-//     };
-
-//     fetchRecordings();
-//   }, [selectedPatient]);
-
-//   // Fetch ECG signal
-//   const fetchData = async () => {
-//     if (!selectedPatient || !selectedRecording) {
-//       console.log("Patient or recording not selected, cannot fetch data.");
-//       return;
-//     }
-
-//     setLoading(true);
-//     setData(null);
-//     console.log("Fetching ECG data...");
-
-//     const lowerChannel = channel.toLowerCase();
-//     const apiUrl = `${import.meta.env.VITE_API_URL}/ecg/mode1/signal?patient=${selectedPatient}&recording=${selectedRecording}&channel=${lowerChannel}&offset=${offset}&length=${length}`;
-
-//     console.log("API URL:", apiUrl);
-
-//     try {
-//       const response = await fetch(apiUrl);
-//       const jsonData = await response.json();
-
-//       console.log("Raw response data:", jsonData);
-
-//       if (!response.ok) {
-//         console.error("Server responded with error:", jsonData);
-//         setData(null);
-//       } else {
-//         setData(jsonData);
-//         console.log("ECG data state updated.");
-//          if (onDataFetched) {
-//         onDataFetched(jsonData);
-//       }
-//       console.log("ECG data state updated and sent to parent.");
-    
-//       }
-//     } catch (error) {
-//       console.error("Error fetching ECG data:", error);
-//       setData(null);
-//     } finally {
-//       setLoading(false);
-//       console.log("Fetching ECG data finished.");
-//     }
-//   };
-
-//   return (
-//     <div className="mode1-container">
-//             {/* Back Button */}
-//       <button className="back-button" onClick={() => navigate("/")}>
-//         Back
-//       </button>
-//       <h2 className="mode1-title">Signal Viewer</h2>
-
-//       <div className="mode1-flex">
-//         <div className="controls-container">
-//           <div>
-//             <label className="control-label">Patient:</label>
-//             <select
-//               className="control-select"
-//               value={selectedPatient}
-//               onChange={(e) => {
-//                 setSelectedPatient(e.target.value);
-//                 console.log("Selected patient changed to:", e.target.value);
-//               }}
-//             >
-//               <option value="">-- Select Patient --</option>
-//               {patients.map((patient) => (
-//                 <option key={patient} value={patient}>
-//                   {patient}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div>
-//             <label className="control-label">Recording:</label>
-//             <select
-//               className="control-select"
-//               value={selectedRecording}
-//               onChange={(e) => {
-//                 setSelectedRecording(e.target.value);
-//                 console.log("Selected recording changed to:", e.target.value);
-//               }}
-//               disabled={!selectedPatient}
-//             >
-//               <option value="">-- Select Recording --</option>
-//               {recordings.map((rec) => (
-//                 <option key={rec} value={rec}>
-//                   {rec}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div>
-//             <label className="control-label">Channel:</label>
-//             <select
-//               className="control-select"
-//               value={channel}
-//               onChange={(e) => {
-//                 setChannel(e.target.value);
-//                 console.log("Selected channel changed to:", e.target.value);
-//               }}
-//             >
-//               <option value="I">I</option>
-//               <option value="II">II</option>
-//               <option value="III">III</option>
-//               <option value="aVR">aVR</option>
-//               <option value="aVL">aVL</option>
-//               <option value="aVF">aVF</option>
-//               <option value="V1">V1</option>
-//               <option value="V2">V2</option>
-//               <option value="V3">V3</option>
-//               <option value="V4">V4</option>
-//               <option value="V5">V5</option>
-//               <option value="V6">V6</option>
-//             </select>
-//           </div>
-
-//           <div>
-//             <label className="control-label">Length:</label>
-//             <input
-//               type="number"
-//               className="control-input"
-//               value={length}
-//               onChange={(e) => {
-//                 setLength(Number(e.target.value));
-//                 console.log("Length changed to:", e.target.value);
-//               }}
-//             />
-//           </div>
-
-//           <div>
-//             <label className="control-label">Offset:</label>
-//             <input
-//               type="number"
-//               className="control-input"
-//               value={offset}
-//               onChange={(e) => {
-//                 setOffset(Number(e.target.value));
-//                 console.log("Offset changed to:", e.target.value);
-//               }}
-//             />
-//           </div>
-
-//           <button
-//             className="control-button"
-//             onClick={fetchData}
-//             disabled={!selectedPatient || !selectedRecording}
-//           >
-//             Fetch ECG
-//           </button>
-//         </div>
-
-//         <div className="plot-container">
-//           {loading && <p className="mode1-loading">Loading ECG data...</p>}
-
-//           {data && data.x && data.y && data.x.length > 0 && data.y.length > 0 ? (
-//             <Plot
-//               data={[
-//                 {
-//                   x: data.x,
-//                   y: data.y,
-//                   type: "scatter",
-//                   mode: "lines",
-//                   line: { color: "red" },
-//                 },
-//               ]}
-//               layout={{
-//                 width: "100%",
-//                 height: 400,
-//                 title: `ECG Signal (${channel})`,
-//                 xaxis: { title: "Time" },
-//                 yaxis: { title: "Voltage (mV)" },
-//                 paper_bgcolor: "#1e3a8a",
-//                 plot_bgcolor: "#1e3a8a",
-//                 font: { color: "white" },
-//               }}
-//             />
-//           ) : (
-//             !loading && <p className="mode1-loading">No valid ECG data available.</p>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
-import { useNavigate } from 'react-router-dom';
-import { useECG } from './ecgContext'; // استيراد useECG
-import './mode1.css';
+import React, { useState, useEffect } from "react";
+import Plot from "react-plotly.js";
+import { useNavigate } from "react-router-dom";
+import { useECG } from "./ecgContext";
+import "./mode1.css";
 
 export default function Mode1() {
   const navigate = useNavigate();
-  const { selectedPatient, setSelectedPatient, selectedRecording, setSelectedRecording, ecgData, setEcgData } = useECG(); // استخدام useECG
-  const [patients, setPatients] = useState([]);
-  const [recordings, setRecordings] = useState([]);
+  const {
+    selectedPatient,
+    selectedRecording,
+    ecgData,
+    setEcgData,
+    length,
+    setLength,
+    offset,
+    setOffset,
+  } = useECG();
+
   const [channel, setChannel] = useState("I");
-  const [length, setLength] = useState(200);
-  const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  // جلب جميع المرضى عند تحميل المكون
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/ecg/mode1/patients`);
-        const json = await res.json();
-        if (json.patients) {
-          setPatients(json.patients);
-        }
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      }
-    };
-
-    fetchPatients();
-  }, []);
-
-  // جلب التسجيلات عندما يتم اختيار مريض
-  useEffect(() => {
-    if (!selectedPatient) {
-      setRecordings([]);
-      setSelectedRecording("");
-      return;
-    }
-
-    const fetchRecordings = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/ecg/mode1/records?patient=${selectedPatient}`);
-        const json = await res.json();
-        if (json.records) {
-          const recs = json.records.map((r) => r.recording);
-          setRecordings(recs);
-        }
-      } catch (error) {
-        console.error("Error fetching recordings:", error);
-      }
-    };
-
-    fetchRecordings();
-  }, [selectedPatient]);
+  const [error, setError] = useState("");
 
   // جلب بيانات ECG
   const fetchData = async () => {
     if (!selectedPatient || !selectedRecording) {
+      setError("Please select both patient and recording from Home page");
       return;
     }
 
     setLoading(true);
+    setError("");
+
     const lowerChannel = channel.toLowerCase();
-    const apiUrl = `${import.meta.env.VITE_API_URL}/ecg/mode1/signal?patient=${selectedPatient}&recording=${selectedRecording}&channel=${lowerChannel}&offset=${offset}&length=${length}`;
+    const apiUrl = `${
+      import.meta.env.VITE_API_URL
+    }/ecg/mode1/signal?patient=${selectedPatient}&recording=${selectedRecording}&channel=${lowerChannel}&offset=${offset}&length=${length}`;
 
     try {
       const response = await fetch(apiUrl);
       const jsonData = await response.json();
 
-      if (response.ok) {
-        setEcgData(jsonData); // حفظ البيانات في Context
+      if (response.ok && jsonData.x && jsonData.y) {
+        setEcgData(jsonData);
       } else {
-        setEcgData(null); // في حال فشل الطلب
+        setError(jsonData.error || "Failed to fetch ECG data");
+        setEcgData(null);
       }
     } catch (error) {
       console.error("Error fetching ECG data:", error);
+      setError("Network error - Could not connect to server");
       setEcgData(null);
     } finally {
       setLoading(false);
     }
   };
 
+  // جلب البيانات تلقائياً عند فتح Mode1 إذا كان Patient و Recording محددين
+  useEffect(() => {
+    if (selectedPatient && selectedRecording) {
+      fetchData();
+    }
+  }, []);
+
   return (
     <div className="mode1-container">
-      {/* زر العودة */}
-      <button className="back-button" onClick={() => navigate("/")}>
-        Back
-      </button>
-      <h2 className="mode1-title">Signal Viewer</h2>
+      <div className="mode1-header">
+        <button className="mode1-back-button" onClick={() => navigate("/")}>
+          🏠 Back to Home
+        </button>
+        <h1 className="mode1-title">📊 Mode 1 - Signal Viewer</h1>
+      </div>
 
-      <div className="mode1-flex">
-        <div className="controls-container">
-          {/* اختيار المريض */}
-          <div>
-            <label className="control-label">Patient:</label>
-            <select
-              className="control-select"
-              value={selectedPatient || ""}
-              onChange={(e) => setSelectedPatient(e.target.value)}
-            >
-              <option value="">-- Select Patient --</option>
-              {patients.map((patient) => (
-                <option key={patient} value={patient}>
-                  {patient}
-                </option>
-              ))}
-            </select>
+      {/* معلومات المريض */}
+      <div className="mode1-patient-info">
+        <div className="mode1-patient-item">
+          <div className="mode1-patient-label">Patient</div>
+          <div className="mode1-patient-value">
+            {selectedPatient || "Not selected"}
           </div>
+        </div>
+        <div className="mode1-patient-item">
+          <div className="mode1-patient-label">Recording</div>
+          <div className="mode1-patient-value">
+            {selectedRecording || "Not selected"}
+          </div>
+        </div>
+        <div className="mode1-patient-item">
+          <div className="mode1-patient-label">Length</div>
+          <div className="mode1-patient-value">{length} samples</div>
+        </div>
+        <div className="mode1-patient-item">
+          <div className="mode1-patient-label">Offset</div>
+          <div className="mode1-patient-value">{offset} samples</div>
+        </div>
+      </div>
 
-          {/* اختيار التسجيل */}
-          <div>
-            <label className="control-label">Recording:</label>
-            <select
-              className="control-select"
-              value={selectedRecording || ""}
-              onChange={(e) => setSelectedRecording(e.target.value)}
-              disabled={!selectedPatient}
-            >
-              <option value="">-- Select Recording --</option>
-              {recordings.map((rec) => (
-                <option key={rec} value={rec}>
-                  {rec}
-                </option>
-              ))}
-            </select>
-          </div>
+      {(!selectedPatient || !selectedRecording) && (
+        <div className="mode1-warning">
+          ⚠️ Please select patient and recording from Home page
+        </div>
+      )}
+
+      <div className="mode1-content">
+        {/* لوحة التحكم */}
+        <div className="mode1-controls-panel">
+          <h3 className="mode1-controls-title">🎯 Signal Configuration</h3>
 
           {/* اختيار القناة */}
-          <div>
-            <label className="control-label">Channel:</label>
+          <div className="mode1-channel-group">
+            <label className="mode1-channel-label">📡 Channel</label>
             <select
-              className="control-select"
+              className="mode1-channel-select"
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
+              disabled={!selectedPatient || !selectedRecording}
             >
               <option value="I">I</option>
               <option value="II">II</option>
@@ -410,57 +130,222 @@ export default function Mode1() {
             </select>
           </div>
 
-          {/* اختيار طول البيانات */}
-          <div>
-            <label className="control-label">Length:</label>
+          {/* إعدادات الإشارة */}
+          <div className="mode1-settings-group">
+            <label className="mode1-setting-label">📏 Length</label>
             <input
               type="number"
-              className="control-input"
+              min="100"
+              max="5000"
+              step="100"
               value={length}
               onChange={(e) => setLength(Number(e.target.value))}
+              className="mode1-setting-input"
+              disabled={!selectedPatient || !selectedRecording}
             />
+            <p className="mode1-hint-text">Number of samples (100-5000)</p>
           </div>
 
-          {/* اختيار الإزاحة */}
-          <div>
-            <label className="control-label">Offset:</label>
+          <div className="mode1-settings-group">
+            <label className="mode1-setting-label">⏩ Offset</label>
             <input
               type="number"
-              className="control-input"
+              min="0"
+              step="100"
               value={offset}
               onChange={(e) => setOffset(Number(e.target.value))}
+              className="mode1-setting-input"
+              disabled={!selectedPatient || !selectedRecording}
             />
+            <p className="mode1-hint-text">Starting point in samples</p>
           </div>
 
-          {/* زر جلب بيانات ECG */}
+          {/* زر التحديث */}
           <button
-            className="control-button"
+            className="mode1-update-button"
             onClick={fetchData}
-            disabled={!selectedPatient || !selectedRecording}
+            disabled={!selectedPatient || !selectedRecording || loading}
           >
-            Fetch ECG
+            {loading ? "🔄 Loading..." : "📥 Fetch ECG Data"}
           </button>
+
+          {/* زر الإعادة */}
+          <button
+            className="mode1-update-button"
+            onClick={() => {
+              setChannel("I");
+              setLength(200);
+              setOffset(0);
+            }}
+            disabled={!selectedPatient || !selectedRecording}
+            style={{
+              background: "linear-gradient(45deg, #4facfe, #00f2fe)",
+              marginTop: "10px",
+            }}
+          >
+            🔄 Reset Settings
+          </button>
+
+          {/* معلومات الإشارات */}
+          {ecgData && (
+            <div className="mode1-signal-info">
+              <h4 className="mode1-signal-title">📊 Signal Information</h4>
+              <div className="mode1-channel-info">
+                <span className="mode1-channel-name">Channel</span>
+                <span className="mode1-channel-samples">{ecgData.channel}</span>
+              </div>
+              <div className="mode1-channel-info">
+                <span className="mode1-channel-name">Data Points</span>
+                <span className="mode1-channel-samples">
+                  {ecgData.y?.length || 0}
+                </span>
+              </div>
+              {ecgData.actual_length && (
+                <div className="mode1-channel-info">
+                  <span className="mode1-channel-name">Actual Length</span>
+                  <span className="mode1-channel-samples">
+                    {ecgData.actual_length}
+                  </span>
+                </div>
+              )}
+
+              {ecgData.diagnosis &&
+                ecgData.diagnosis !== "No diagnosis found" && (
+                  <div className="mode1-diagnosis-box">
+                    <h4 className="mode1-diagnosis-title">🏥 Diagnosis</h4>
+                    <p className="mode1-diagnosis-text">{ecgData.diagnosis}</p>
+                  </div>
+                )}
+            </div>
+          )}
         </div>
 
-        {/* عرض الرسم البياني */}
-        <div className="plot-container">
-          {loading && <p className="mode1-loading">Loading ECG data...</p>}
-          {ecgData && ecgData.x && ecgData.y && ecgData.x.length > 0 && ecgData.y.length > 0 ? (
-            <Plot
-              data={[{ x: ecgData.x, y: ecgData.y, type: "scatter", mode: "lines", line: { color: "red" } }]}
-              layout={{
-                width: "100%",
-                height: 400,
-                title: `ECG Signal (${channel})`,
-                xaxis: { title: "Time" },
-                yaxis: { title: "Voltage (mV)" },
-                paper_bgcolor: "#1e3a8a",
-                plot_bgcolor: "#1e3a8a",
-                font: { color: "white" },
-              }}
-            />
+        {/* منطقة الرسم */}
+        <div className="mode1-plot-container">
+          {loading && (
+            <div className="mode1-loading-container">
+              <div className="mode1-spinner"></div>
+              <p className="mode1-loading-text">Loading ECG data...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="mode1-error-container">
+              <p className="mode1-error-text">❌ {error}</p>
+              <button className="mode1-retry-button" onClick={fetchData}>
+                🔄 Retry
+              </button>
+            </div>
+          )}
+
+          {!selectedPatient || !selectedRecording ? (
+            <div className="mode1-placeholder-container">
+              <p className="mode1-placeholder-text">
+                👈 Please select patient and recording from Home page
+              </p>
+            </div>
+          ) : ecgData &&
+            ecgData.x &&
+            ecgData.y &&
+            ecgData.x.length > 0 &&
+            ecgData.y.length > 0 ? (
+            <div className="mode1-plot-wrapper">
+              <Plot
+                data={[
+                  {
+                    x: ecgData.x,
+                    y: ecgData.y,
+                    type: "scatter",
+                    mode: "lines",
+                    line: {
+                      color: "#00ff88",
+                      width: 2,
+                    },
+                    name: `Channel ${channel}`,
+                  },
+                ]}
+                layout={{
+                  width: "100%",
+                  height: 500,
+                  title: {
+                    text: `ECG Signal - ${selectedPatient} (${channel})`,
+                    font: { color: "white", size: 18 },
+                  },
+                  xaxis: {
+                    title: { text: "Time (samples)", font: { color: "white" } },
+                    gridcolor: "#666",
+                    color: "white",
+                    showline: true,
+                    linecolor: "white",
+                  },
+                  yaxis: {
+                    title: { text: "Voltage (mV)", font: { color: "white" } },
+                    gridcolor: "#666",
+                    color: "white",
+                    showline: true,
+                    linecolor: "white",
+                  },
+                  paper_bgcolor: "#1f2937",
+                  plot_bgcolor: "#111827",
+                  font: { color: "white" },
+                  margin: { t: 60, r: 40, b: 60, l: 60 },
+                  showlegend: true,
+                  legend: {
+                    x: 0,
+                    y: 1,
+                    bgcolor: "rgba(255,255,255,0.1)",
+                    bordercolor: "rgba(255,255,255,0.2)",
+                    font: { color: "white" },
+                  },
+                }}
+                config={{
+                  displayModeBar: true,
+                  displaylogo: false,
+                  modeBarButtonsToRemove: ["pan2d", "lasso2d", "select2d"],
+                  responsive: true,
+                }}
+              />
+
+              {/* تفسير الرسم */}
+              <div className="mode1-explanation">
+                <h4 className="mode1-explanation-title">
+                  📈 How to read this ECG Signal:
+                </h4>
+                <ul className="mode1-explanation-list">
+                  <li className="mode1-explanation-item">
+                    <span className="mode1-explanation-strong">X-axis</span>:
+                    Time in samples
+                  </li>
+                  <li className="mode1-explanation-item">
+                    <span className="mode1-explanation-strong">Y-axis</span>:
+                    Voltage in millivolts (mV)
+                  </li>
+                  <li className="mode1-explanation-item">
+                    <span className="mode1-explanation-strong">Green line</span>
+                    : Represents the ECG signal waveform
+                  </li>
+                  <li className="mode1-explanation-item">
+                    <span className="mode1-explanation-strong">Peaks</span>:
+                    Correspond to heartbeats (QRS complexes)
+                  </li>
+                  <li className="mode1-explanation-item">
+                    <span className="mode1-explanation-strong">
+                      Regular patterns
+                    </span>
+                    : Indicate normal heart rhythm
+                  </li>
+                </ul>
+              </div>
+            </div>
           ) : (
-            !loading && <p className="mode1-loading">No valid ECG data available.</p>
+            <div className="mode1-placeholder-container">
+              <p className="mode1-placeholder-text">
+                📈 No ECG data to display
+              </p>
+              <p className="mode1-placeholder-text">
+                Click "Fetch ECG Data" to load the signal
+              </p>
+            </div>
           )}
         </div>
       </div>

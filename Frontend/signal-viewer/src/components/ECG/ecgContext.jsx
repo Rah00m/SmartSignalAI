@@ -1,28 +1,50 @@
-// ecgContext.js
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from "react";
 
-// إنشاء Context
 const ECGContext = createContext();
 
-// إنشاء Provider لتمرير البيانات عبر المكونات
 export const ECGProvider = ({ children }) => {
-  const [selectedPatient, setSelectedPatient] = useState(null); // مريض مختار
-  const [selectedRecording, setSelectedRecording] = useState(null); // تسجيل ECG مختار
-  const [ecgData, setEcgData] = useState(null); // بيانات ECG
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [selectedRecording, setSelectedRecording] = useState(null);
+  const [ecgData, setEcgData] = useState(null);
+  const [length, setLength] = useState(200);
+  const [offset, setOffset] = useState(0);
+  const [patients, setPatients] = useState([]);
+  const [recordings, setRecordings] = useState([]);
+
+  // يمكن إضافة useEffect هنا لجلب المرضى تلقائياً إذا أردت
+  // أو يمكن جلبهم من المكون Home كما في الكود أعلاه
 
   return (
-    <ECGContext.Provider value={{
-      selectedPatient,
-      setSelectedPatient,
-      selectedRecording,
-      setSelectedRecording,
-      ecgData,
-      setEcgData
-    }}>
+    <ECGContext.Provider
+      value={{
+        // البيانات
+        selectedPatient,
+        selectedRecording,
+        ecgData,
+        length,
+        offset,
+        patients,
+        recordings,
+
+        // دوال التحديث
+        setSelectedPatient,
+        setSelectedRecording,
+        setEcgData,
+        setLength,
+        setOffset,
+        setPatients,
+        setRecordings,
+      }}
+    >
       {children}
     </ECGContext.Provider>
   );
 };
 
-// استخدام Context في المكونات
-export const useECG = () => useContext(ECGContext);
+export const useECG = () => {
+  const context = useContext(ECGContext);
+  if (!context) {
+    throw new Error("useECG must be used within an ECGProvider");
+  }
+  return context;
+};
