@@ -1,0 +1,5 @@
+Backend/app/data/
+Backend/model_cache/
+
+**/__pycache__/
+*.pyc

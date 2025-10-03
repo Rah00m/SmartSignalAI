@@ -3,6 +3,7 @@ import wfdb
 import pandas as pd
 import os
 
+# uvicorn app.main:app --reload
 
 router = APIRouter()
 
