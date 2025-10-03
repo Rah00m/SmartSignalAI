@@ -125,19 +125,6 @@ export default function Mode5() {
     }
   };
 
-  const debugModel = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/ecg/mode5/debug-model`
-      );
-      const result = await response.json();
-      console.log("🔧 Model Debug Info:", result);
-      alert("Check console for model debug information");
-    } catch (error) {
-      console.error("❌ Debug failed:", error);
-    }
-  };
-
   const checkModelStatus = async () => {
     try {
       const response = await fetch(
@@ -452,9 +439,7 @@ export default function Mode5() {
               <button onClick={testAIModel} className="mode5-test-model-button">
                 🧪 Test AI Model
               </button>
-              <button onClick={debugModel} className="mode5-debug-model-button">
-                🔧 Debug Model
-              </button>
+
               <button
                 onClick={checkModelStatus}
                 className="mode5-status-button"

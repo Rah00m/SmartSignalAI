@@ -505,3 +505,93 @@
     font-size: 13px;
   }
 }
+
+
+/* إضافة الأنماط للبلوت الجديد */
+.mode1-full-signal-plot {
+  margin-bottom: 20px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 10px;
+  background: #1f2937;
+}
+
+.mode1-mini-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.mode1-mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #00ff88;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+.mode1-detail-plot {
+  margin-top: 0;
+}
+
+.mode1-playback-controls {
+  margin-bottom: 15px;
+}
+
+.mode1-playback-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mode1-play-button {
+  flex: 1;
+  background: linear-gradient(45deg, #00b09b, #96c93d);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.mode1-play-button.playing {
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+.mode1-play-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.mode1-full-signal-plot {
+  margin-bottom: 20px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 10px;
+  background: #1f2937;
+}
+
+.mode1-mini-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.mode1-mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #00ff88;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}

@@ -279,10 +279,10 @@ function ECGHome() {
               <span className="home-mode-icon">🧠</span>
               <span className="home-mode-text">
                 <span className="home-mode-name">
-                  Mode 5 - Channel Prediction
+                  Mode 5 - Disease Prediction
                 </span>
                 <span className="home-mode-description">
-                  Predict missing ECG channels
+                  Predict Disease from ECG channels analysis
                 </span>
               </span>
             </button>
