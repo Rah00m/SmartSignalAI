@@ -40,7 +40,6 @@ def get_channels(patient: str, recording: str):
     except Exception as e:
         return {"error": f"Error reading record: {str(e)}"}
 
-# دالة جديدة تدعم Single Channel و Multi Channel
 @router.get("/signal")
 def get_signal(
     patient: str, 
@@ -59,7 +58,6 @@ def get_signal(
         record = wfdb.rdrecord(record_path)
         df = pd.DataFrame(record.p_signal, columns=record.sig_name)
 
-        # تحديد القنوات المطلوبة
         if channels:
             channels_list = [ch.strip() for ch in channels.split(",")]
         elif channel:
@@ -67,19 +65,16 @@ def get_signal(
         else:
             return {"error": "Either 'channel' or 'channels' parameter is required"}
 
-        # التحقق من صحة القنوات
         invalid_channels = [ch for ch in channels_list if ch not in record.sig_name]
         if invalid_channels:
             return {"error": f"Invalid channel(s): {', '.join(invalid_channels)}. Available: {record.sig_name}"}
 
-        # التأكد من أن offset و length ضمن الحدود
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
         
         end_index = min(offset + length, total_length)
         
-        # جلب البيانات
         signals = {}
         
         for ch in channels_list:
@@ -88,7 +83,6 @@ def get_signal(
 
         diagnosis = get_diagnosis(patient, recording)
 
-        # إرجاع البيانات بشكل أوضح
         return {
             "patient": patient,
             "recording": recording,

@@ -21,7 +21,6 @@ export default function Mode1() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // جلب بيانات ECG
   const fetchData = async () => {
     if (!selectedPatient || !selectedRecording) {
       setError("Please select both patient and recording from Home page");
@@ -55,7 +54,6 @@ export default function Mode1() {
     }
   };
 
-  // جلب البيانات تلقائياً عند فتح Mode1 إذا كان Patient و Recording محددين
   useEffect(() => {
     if (selectedPatient && selectedRecording) {
       fetchData();
@@ -71,7 +69,6 @@ export default function Mode1() {
         <h1 className="mode1-title">📊 Mode 1 - Signal Viewer</h1>
       </div>
 
-      {/* معلومات المريض */}
       <div className="mode1-patient-info">
         <div className="mode1-patient-item">
           <div className="mode1-patient-label">Patient</div>
@@ -102,11 +99,9 @@ export default function Mode1() {
       )}
 
       <div className="mode1-content">
-        {/* لوحة التحكم */}
         <div className="mode1-controls-panel">
           <h3 className="mode1-controls-title">🎯 Signal Configuration</h3>
 
-          {/* اختيار القناة */}
           <div className="mode1-channel-group">
             <label className="mode1-channel-label">📡 Channel</label>
             <select
@@ -130,7 +125,6 @@ export default function Mode1() {
             </select>
           </div>
 
-          {/* إعدادات الإشارة */}
           <div className="mode1-settings-group">
             <label className="mode1-setting-label">📏 Length</label>
             <input
@@ -160,7 +154,6 @@ export default function Mode1() {
             <p className="mode1-hint-text">Starting point in samples</p>
           </div>
 
-          {/* زر التحديث */}
           <button
             className="mode1-update-button"
             onClick={fetchData}
@@ -169,7 +162,6 @@ export default function Mode1() {
             {loading ? "🔄 Loading..." : "📥 Fetch ECG Data"}
           </button>
 
-          {/* زر الإعادة */}
           <button
             className="mode1-update-button"
             onClick={() => {
@@ -186,7 +178,6 @@ export default function Mode1() {
             🔄 Reset Settings
           </button>
 
-          {/* معلومات الإشارات */}
           {ecgData && (
             <div className="mode1-signal-info">
               <h4 className="mode1-signal-title">📊 Signal Information</h4>
@@ -220,7 +211,6 @@ export default function Mode1() {
           )}
         </div>
 
-        {/* منطقة الرسم */}
         <div className="mode1-plot-container">
           {loading && (
             <div className="mode1-loading-container">

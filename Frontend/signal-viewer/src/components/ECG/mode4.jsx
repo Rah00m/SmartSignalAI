@@ -7,12 +7,11 @@ import "./mode4.css";
 function computeRecurrencePlot(signal1, signal2, threshold) {
   const N = signal1.length;
 
-  // Normalize إجباري للإشارتين
   const normalize = (arr) => {
     const min = Math.min(...arr);
     const max = Math.max(...arr);
     const range = max - min;
-    if (range === 0) return arr.map(() => 0.5); // تجنب القسمة على صفر
+    if (range === 0) return arr.map(() => 0.5);
     return arr.map((val) => (val - min) / range);
   };
 
@@ -44,7 +43,6 @@ function computeRecurrencePlot(signal1, signal2, threshold) {
 }
 
 function computeAdaptiveThreshold(signal1, signal2) {
-  // حساب الانحراف المعياري بدلاً من المدى
   const mean1 = signal1.reduce((a, b) => a + b, 0) / signal1.length;
   const mean2 = signal2.reduce((a, b) => a + b, 0) / signal2.length;
 
@@ -56,7 +54,7 @@ function computeAdaptiveThreshold(signal1, signal2) {
   const std1 = Math.sqrt(variance1);
   const std2 = Math.sqrt(variance2);
 
-  return ((std1 + std2) / 2) * 0.1; // 10% من متوسط الانحراف المعياري
+  return ((std1 + std2) / 2) * 0.1;
 }
 
 export default function Mode4() {
@@ -72,7 +70,6 @@ export default function Mode4() {
   const [signalsData, setSignalsData] = useState(null);
   const [error, setError] = useState("");
 
-  // جلب بيانات القناتين معاً في طلب واحد
   const fetchSignals = async () => {
     if (!selectedPatient || !selectedRecording) return;
 
@@ -80,7 +77,6 @@ export default function Mode4() {
     setError("");
 
     try {
-      // استخدام lowercase مباشرة كما في البيانات
       const channelsParam = `${channel1},${channel2}`;
 
       const apiUrl = `${
@@ -116,14 +112,12 @@ export default function Mode4() {
     }
   };
 
-  // جلب البيانات عند تغيير القنوات أو الإعدادات
   useEffect(() => {
     if (selectedPatient && selectedRecording) {
       fetchSignals();
     }
   }, [channel1, channel2, selectedPatient, selectedRecording, length, offset]);
 
-  // حساب Recurrence Plot
   let recurrenceMatrix = [];
   let plotData = [];
   let plotLayout = {};
@@ -150,7 +144,6 @@ export default function Mode4() {
       signal2Sample: signal2.slice(0, 5),
     });
 
-    // التأكد من أن الإشارتين بنفس الطول
     const minLength = Math.min(signal1.length, signal2.length);
     const trimmedSignal1 = signal1.slice(0, minLength);
     const trimmedSignal2 = signal2.slice(0, minLength);

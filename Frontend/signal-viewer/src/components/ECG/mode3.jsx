@@ -14,7 +14,6 @@ export default function Mode3() {
   const [error, setError] = useState("");
   const [cycleLength, setCycleLength] = useState(200);
 
-  // جلب بيانات القنوات الثلاثة
   const fetchSignals = async () => {
     if (!selectedPatient || !selectedRecording) return;
 
@@ -50,7 +49,6 @@ export default function Mode3() {
     }
   };
 
-  // تحويل الإشارة إلى إحداثيات Polar (معدلة)
   const convertToPolar = (signal) => {
     if (!signal || signal.length === 0) {
       console.warn("⚠️ No signal data available");
@@ -62,7 +60,6 @@ export default function Mode3() {
 
     console.log(`🔄 Converting ${N} samples to polar coordinates`);
 
-    // Normalize signal to range [0, 1] للجميع
     const minVal = Math.min(...signal);
     const maxVal = Math.max(...signal);
     const range = maxVal - minVal;
@@ -76,7 +73,7 @@ export default function Mode3() {
     for (let i = 0; i < N; i++) {
       const angle = (i / N) * 360; // 0 to 360 degrees
       const normalizedValue = range === 0 ? 0.5 : (signal[i] - minVal) / range;
-      const radius = normalizedValue; // استخدام القيمة الطبيعية [0,1]
+      const radius = normalizedValue;
 
       polarData.push({
         theta: angle,
@@ -91,21 +88,18 @@ export default function Mode3() {
     return polarData;
   };
 
-  // جلب البيانات عند التغيير
   useEffect(() => {
     if (selectedPatient && selectedRecording) {
       fetchSignals();
     }
   }, [channels, selectedPatient, selectedRecording, length, offset]);
 
-  // تحديث قناة معينة
   const updateChannel = (index, value) => {
     const newChannels = [...channels];
     newChannels[index] = value;
     setChannels(newChannels);
   };
 
-  // إعداد بيانات الرسم البياني
   let plotData = [];
   let plotLayout = {};
 
@@ -155,7 +149,8 @@ export default function Mode3() {
       polar: {
         radialaxis: {
           visible: true,
-          range: [0, 1], // مدى ثابت للقيم الطبيعية [0,1]
+          range: [0, 1],
+
           color: "white",
           gridcolor: "#666",
           tickfont: { color: "white" },

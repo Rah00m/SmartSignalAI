@@ -7,15 +7,13 @@ BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\d
 
 @router.get("/patients")
 def list_patients():
-    """
-    بترجع كل أسماء المرضى الموجودين في مجلد البيانات
-    """
+
     try:
         patients = [
             folder for folder in os.listdir(BASE_PATH)
             if os.path.isdir(os.path.join(BASE_PATH, folder)) and folder.startswith('patient')
         ]
-        patients.sort()  # ترتيب المرضى
+        patients.sort()  
         return {"patients": patients}
     except Exception as e:
         return {"error": str(e)}
@@ -23,9 +21,7 @@ def list_patients():
 
 @router.get("/records")
 def list_patient_records(patient: str):
-    """
-    بترجع قائمة بكل التسجيلات (recordings) للمريض المطلوب
-    """
+ 
     patient_path = os.path.join(BASE_PATH, patient)
     
     if not os.path.exists(patient_path):
@@ -42,7 +38,6 @@ def list_patient_records(patient: str):
                     "has_xyz": os.path.exists(xyz_path)
                 })
         
-        # ترتيب التسجيلات
         records.sort(key=lambda x: x["recording"])
         
         return {

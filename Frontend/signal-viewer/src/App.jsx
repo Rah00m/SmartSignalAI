@@ -1,4 +1,3 @@
-
 // import React, { useState } from "react";
 // import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -50,9 +49,11 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Mode1 from "./components/ECG/mode1";
 import Mode3 from "./components/ECG/mode3";
+import Mode2 from "./components/ECG/mode2";
+import Mode5 from "./components/ECG/mode5";
 import ECGHome from "./components/ECG/ecg_home"; // الصفحة الرئيسية
-import { ECGProvider } from './components/ECG/ecgContext'; // استيراد ECGProvider
-import Mode4 from "./components/ECG/mode4";  // مثال مود آخر
+import { ECGProvider } from "./components/ECG/ecgContext"; // استيراد ECGProvider
+import Mode4 from "./components/ECG/mode4"; // مثال مود آخر
 import "./App.css"; // استيراد التنسيقات
 
 function App() {
@@ -64,21 +65,29 @@ function App() {
   };
 
   return (
-    <ECGProvider> 
+    <ECGProvider>
       <Router>
         <div className="app-header">
           <h1 className="app-title">SmartSignalAI</h1>
         </div>
         <Routes>
           {/* الصفحة الرئيسية */}
-          <Route path="/" element={<ECGHome onDataFetched={handleDataFetched} />} />
+          <Route
+            path="/"
+            element={<ECGHome onDataFetched={handleDataFetched} />}
+          />
 
           {/* رابط Mode1: يحتوي على دالة استقبال البيانات */}
-          <Route path="/mode1" element={<Mode1 onDataFetched={handleDataFetched} />} />
+          <Route
+            path="/mode1"
+            element={<Mode1 onDataFetched={handleDataFetched} />}
+          />
 
           {/* روابط المودات الأخرى */}
           <Route path="/mode4" element={<Mode4 signalData={signalData} />} />
           <Route path="/mode3" element={<Mode3 signalData={signalData} />} />
+          <Route path="/mode2" element={<Mode2 signalData={signalData} />} />
+          <Route path="/mode5" element={<Mode5 signalData={signalData} />} />
         </Routes>
       </Router>
     </ECGProvider>

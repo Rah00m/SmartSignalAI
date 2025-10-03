@@ -37,7 +37,7 @@ def get_diagnosis(patient: str, recording: str):
 def get_mode3_signal(
     patient: str,
     recording: str,
-    channels: str,  # Format: "i,ii,v1" etc.
+    channels: str,  
     offset: int = 0,
     length: int = 1000
 ):
@@ -50,25 +50,21 @@ def get_mode3_signal(
         record = wfdb.rdrecord(record_path)
         df = pd.DataFrame(record.p_signal, columns=record.sig_name)
 
-        # تحويل القنوات إلى list
         channels_list = [ch.strip().lower() for ch in channels.split(",")]
         
         if len(channels_list) != 3:
             return {"error": "Exactly 3 channels are required for Mode 3"}
 
-        # التحقق من صحة القنوات
         invalid_channels = [ch for ch in channels_list if ch not in record.sig_name]
         if invalid_channels:
             return {"error": f"Invalid channel(s): {', '.join(invalid_channels)}. Available: {record.sig_name}"}
 
-        # التأكد من حدود offset و length
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
         
         end_index = min(offset + length, total_length)
         
-        # جلب بيانات القنوات الثلاثة
         signals = {}
         for ch in channels_list:
             signals[ch] = df[ch][offset:end_index].tolist()

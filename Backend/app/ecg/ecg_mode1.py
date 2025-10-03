@@ -102,6 +102,9 @@
 # # http://127.0.0.1:8000/ecg/mode1/channels?patient=patient001&recording=s0010_re
 
 
+
+
+
 from fastapi import APIRouter
 import wfdb
 import pandas as pd
@@ -135,7 +138,6 @@ def get_diagnosis(patient: str, recording: str):
     return "\n".join(diagnosis_lines) if diagnosis_lines else "No diagnosis found."
 
 
-# دالة للحصول على القنوات المتاحة (Channels)
 @router.get("/channels")
 def get_channels(patient: str, recording: str):
     """
@@ -147,13 +149,12 @@ def get_channels(patient: str, recording: str):
         return {"error": "Invalid recording path."}
     
     try:
-        record = wfdb.rdrecord(record_path)  # قراءة السجل باستخدام wfdb
+        record = wfdb.rdrecord(record_path)  
         return {"channels": record.sig_name}
     except Exception as e:
         return {"error": f"Error reading record: {str(e)}"}
 
 
-# دالة لاسترجاع إشارة ECG لقناة معينة
 @router.get("/signal")
 def get_signal(patient: str, recording: str, channel: str, offset: int = 0, length: int = 3000):
     """
@@ -165,26 +166,23 @@ def get_signal(patient: str, recording: str, channel: str, offset: int = 0, leng
         return {"error": "Invalid recording path."}
 
     try:
-        record = wfdb.rdrecord(record_path)  # قراءة السجل باستخدام wfdb
+        record = wfdb.rdrecord(record_path) 
 
-        # التحقق إذا كانت القناة المدخلة موجودة في القنوات المتاحة
         if channel not in record.sig_name:
             return {"error": f"Invalid channel name: {channel}. Available channels: {record.sig_name}"}
 
-        df = pd.DataFrame(record.p_signal, columns=record.sig_name)  # تحويل الإشارة إلى DataFrame
+        df = pd.DataFrame(record.p_signal, columns=record.sig_name)  
         
-        # التأكد من أن offset و length ضمن الحدود
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
         
         end_index = min(offset + length, total_length)
-        y = df[channel][offset:end_index].tolist()  # استرجاع جزء من الإشارة
-        x = list(range(offset, offset + len(y)))  # تحديد الزمن (x) مع الإشارة (y)
+        y = df[channel][offset:end_index].tolist()  
+        x = list(range(offset, offset + len(y)))  
 
-        diagnosis = get_diagnosis(patient, recording)  # استرجاع التشخيص
+        diagnosis = get_diagnosis(patient, recording)  
 
-        # إرجاع البيانات المطلوبة
         return {
             "patient": patient,
             "recording": recording,
@@ -198,3 +196,44 @@ def get_signal(patient: str, recording: str, channel: str, offset: int = 0, leng
         }
     except Exception as e:
         return {"error": f"Error processing signal: {str(e)}"}
+
+
+@router.get("/all-signals")
+def get_all_signals(patient: str, recording: str, offset: int = 0, length: int = 1000):
+    """
+    دالة لاسترجاع جميع إشارات الـ ECG لكل القنوات مرة واحدة
+    """
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    
+    if not os.path.exists(record_path + ".dat"):
+        return {"error": "Invalid recording path."}
+
+    try:
+        record = wfdb.rdrecord(record_path)
+        
+        signals = {}
+        df = pd.DataFrame(record.p_signal, columns=record.sig_name)
+        
+        total_length = len(df)
+        if offset >= total_length:
+            return {"error": f"Offset {offset} exceeds signal length {total_length}"}
+        
+        end_index = min(offset + length, total_length)
+        
+        for channel in record.sig_name:
+            signals[channel] = df[channel][offset:end_index].tolist()
+        
+        diagnosis = get_diagnosis(patient, recording)
+
+        return {
+            "patient": patient,
+            "recording": recording,
+            "offset": offset,
+            "length": length,
+            "actual_length": end_index - offset,
+            "diagnosis": diagnosis,
+            "signals": signals,
+            "available_channels": record.sig_name
+        }
+    except Exception as e:
+        return {"error": f"Error processing signals: {str(e)}"}
