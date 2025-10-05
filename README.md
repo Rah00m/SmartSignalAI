@@ -1,0 +1,1 @@
+SmartEEG-AI project. See Backend/README.md and frontend package.json for details.
