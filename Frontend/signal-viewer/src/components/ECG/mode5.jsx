@@ -243,9 +243,9 @@ export default function Mode5() {
       const requestData = {
         patient_info: {
           id: selectedPatient,
-          // age: "52",
-          // gender: "Male",
-          // history: "No known cardiac history",
+          age: "52",
+          gender: "Male",
+          history: "No known cardiac history",
         },
         recording_data: {
           channels: ecgChannels.reduce((acc, channel) => {

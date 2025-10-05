@@ -51,7 +51,6 @@ import Mode1 from "./components/ECG/mode1";
 import Mode3 from "./components/ECG/mode3";
 import Mode2 from "./components/ECG/mode2";
 import Mode5 from "./components/ECG/mode5";
-import Mode6 from "./components/ECG/mode6";
 import ECGHome from "./components/ECG/ecg_home"; // الصفحة الرئيسية
 import { ECGProvider } from "./components/ECG/ecgContext"; // استيراد ECGProvider
 import Mode4 from "./components/ECG/mode4"; // مثال مود آخر
@@ -89,7 +88,6 @@ function App() {
           <Route path="/mode3" element={<Mode3 signalData={signalData} />} />
           <Route path="/mode2" element={<Mode2 signalData={signalData} />} />
           <Route path="/mode5" element={<Mode5 signalData={signalData} />} />
-          <Route path="/mode6" element={<Mode6 signalData={signalData} />} />
         </Routes>
       </Router>
     </ECGProvider>

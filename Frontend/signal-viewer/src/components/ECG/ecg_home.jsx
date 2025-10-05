@@ -286,19 +286,6 @@ function ECGHome() {
                 </span>
               </span>
             </button>
-            <button
-              className="home-mode-button mode6-btn"
-              onClick={() => navigateToMode("/mode6")}
-              disabled={!selectedPatient || !selectedRecording}
-            >
-              <span className="home-mode-icon">🧠</span>
-              <span className="home-mode-text">
-                <span className="home-mode-name">Mode 6 - Xor graph</span>
-                <span className="home-mode-description">
-                  Predict Disease from ECG channels analysis
-                </span>
-              </span>
-            </button>
           </div>
 
           {/* رسالة توجيهية */}

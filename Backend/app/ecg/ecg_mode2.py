@@ -15,6 +15,7 @@ router = APIRouter()
 BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\ptb-diagnostic-ecg-database-1.0.0"
 
 class Mode2Processor:
+    """معالج محسن لـ Mode 2 مع خوارزميات متقدمة"""
     
     def __init__(self):
         self.sampling_rate = 1000
@@ -40,6 +41,7 @@ class Mode2Processor:
             raise
     
     def extract_heartbeats(self, ecg_signal: np.ndarray):
+        """استخراج النبضات الفردية من إشارة ECG"""
         try:
             print(f"📊 Processing ECG signal of length: {len(ecg_signal)}")
             
@@ -251,6 +253,7 @@ class Mode2Processor:
             return []
     
     def detect_abnormal_beats_aggressive(self, beats: List[Dict], threshold: float = 0.02):
+        """خوارزمية عدوانية لاكتشاف النبضات الشاذة"""
         if len(beats) < 5:
             return []
         
@@ -407,6 +410,7 @@ def analyze_ecg_mode2_optimized(
     threshold: float = 0.025,        
     max_beats: int = 100             
 ):
+    """تحليل محسن باستخدام الخوارزمية الجديدة - كل الـ parameters مطلوبة"""
     try:
         print(f"🔍 Starting OPTIMIZED Mode 2 analysis for {patient}/{recording}")
         print(f"🎯 Channel: {channel}, Threshold: {threshold}")
@@ -595,20 +599,3 @@ def get_available_channels(patient: str, recording: str):
         
     except Exception as e:
         return {"error": f"Error getting channels: {str(e)}"}
-    
-    
-    
-    
-    
-#     نبضة فيها:
-# - شكل مختلف: correlation_diff = 0.4
-# - مسافات متوسطة: euclidean_diff = 0.25  
-# - فروق صغيرة: mean_abs_diff = 0.1
-# - ST-T طبيعي: st_t_diff = 0.05
-
-# الدرجة النهائية =  
-#   (0.5 × 0.4) + (0.3 × 0.25) + (0.1 × 0.1) + (0.1 × 0.05)
-# = 0.2 + 0.075 + 0.01 + 0.005 = 0.29
-
-# لو threshold = 0.25 → النبضة شاذة (0.29 > 0.25)
-
