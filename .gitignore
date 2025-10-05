@@ -1,0 +1,5 @@
+Backend/app/data/
+Backend/model_cache/
+Frontend\signal-viewer\node_modules
+**/__pycache__/
+*.pyc

@@ -1,0 +1,91 @@
+/* إزالة الفراغ الافتراضي للـ body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+  height: 100%; /* تأكد من أن الـ body لا يتسبب في السكول */
+}
+
+/* Header فوق الصفحة بالكامل */
+.app-header {
+  width: 100vw; /* يغطي كامل عرض الصفحة */
+  background-color: white; /* خلفية بيضاء */
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky; /* يظل ظاهر عند التمرير */
+  top: 0;
+  z-index: 1000;
+}
+
+/* تعديل العنوان ليكون متناسقًا مع بقية الأجزاء */
+.app-title {
+  color: #e11d48; /* اللون الأحمر */
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* باقي الصفحة */
+.app-container {
+  padding: 20px;
+  margin: 10px auto;
+}
+
+/* ECGHome page styles */
+.home-container {
+  text-align: center;
+  margin-top: 0px;  /* تقليل المسافة العلوية لتكون في الأعلى */
+  padding: 20px; /* تقليل الـ padding الداخلي */
+  background-color: #1e3a8a;
+  color: white;
+  padding-top: 0px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* جعل الصفحة بأكملها تحتل الشاشة */
+  box-sizing: border-box; /* تأكد من أن الـ padding لا يؤثر على حجم العنصر */
+  overflow: hidden; /* إخفاء السكول */
+}
+
+.home-container .app-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #facc15; /* اللون الأصفر */
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column; /* الأزرار تحت بعض */
+  gap: 20px;
+  align-items: center; /* ترتيب الأزرار في المنتصف */
+}
+
+.nav-button {
+  background-color: #facc15;
+  color: #1e3a8a;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 25px;
+  border: none; /* إزالة الحدود */
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  width: 200px; /* تحديد عرض الزر */
+}
+
+.nav-button:hover {
+  background-color: #eab308;
+  transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button:active {
+  transform: scale(0.98);
+}
