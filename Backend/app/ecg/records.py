@@ -7,7 +7,6 @@ BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\d
 
 @router.get("/patients")
 def list_patients():
-
     try:
         patients = [
             folder for folder in os.listdir(BASE_PATH)

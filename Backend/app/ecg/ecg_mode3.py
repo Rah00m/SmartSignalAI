@@ -37,7 +37,11 @@ def get_diagnosis(patient: str, recording: str):
 def get_mode3_signal(
     patient: str,
     recording: str,
+<<<<<<< HEAD
     channels: str,  
+=======
+    channels: str,  # Format: "i,ii,v1" etc.
+>>>>>>> Zeyad
     offset: int = 0,
     length: int = 1000
 ):
@@ -50,21 +54,37 @@ def get_mode3_signal(
         record = wfdb.rdrecord(record_path)
         df = pd.DataFrame(record.p_signal, columns=record.sig_name)
 
+<<<<<<< HEAD
+=======
+        # تحويل القنوات إلى list
+>>>>>>> Zeyad
         channels_list = [ch.strip().lower() for ch in channels.split(",")]
         
         if len(channels_list) != 3:
             return {"error": "Exactly 3 channels are required for Mode 3"}
 
+<<<<<<< HEAD
+=======
+        # التحقق من صحة القنوات
+>>>>>>> Zeyad
         invalid_channels = [ch for ch in channels_list if ch not in record.sig_name]
         if invalid_channels:
             return {"error": f"Invalid channel(s): {', '.join(invalid_channels)}. Available: {record.sig_name}"}
 
+<<<<<<< HEAD
+=======
+        # التأكد من حدود offset و length
+>>>>>>> Zeyad
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
         
         end_index = min(offset + length, total_length)
         
+<<<<<<< HEAD
+=======
+        # جلب بيانات القنوات الثلاثة
+>>>>>>> Zeyad
         signals = {}
         for ch in channels_list:
             signals[ch] = df[ch][offset:end_index].tolist()

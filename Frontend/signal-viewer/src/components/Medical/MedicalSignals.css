@@ -1,0 +1,152 @@
+.medical-signals-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  padding: 40px 20px;
+  color: white;
+}
+
+.medical-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.medical-header h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.medical-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.medical-modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+}
+
+.mode-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mode-card.implemented {
+  cursor: pointer;
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.mode-card.implemented:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.8);
+}
+
+.mode-card.coming-soon {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.mode-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.mode-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.mode-card p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.mode-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.feature-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.feature-tag.disabled {
+  opacity: 0.5;
+}
+
+.status {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.status.implemented {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.status.coming-soon {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.5);
+}
+
+.back-button-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .medical-modes {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .medical-header h1 {
+    font-size: 2.5rem;
+  }
+}

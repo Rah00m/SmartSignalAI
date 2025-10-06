@@ -1,0 +1,259 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* --- 1. Root & Body Styles --- */
+:root {
+  --background-dark: #0f172a;
+  --background-light: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(148, 163, 184, 0.2);
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--background-dark);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+}
+
+/* --- 2. Main Layout --- */
+.main-home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-light) 50%, var(--background-dark) 100%);
+}
+
+.signal-types-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px;
+  flex-grow: 1;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 60px;
+  letter-spacing: -1.5px;
+  color: #fff;
+}
+
+.signal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* --- 3. 3D Flip Card Mechanics & Styling --- */
+.card-container {
+  perspective: 1500px; /* This enables the 3D space */
+}
+
+.flip-card {
+  width: 100%;
+  height: 440px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d; /* This is crucial for 3D */
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  color: white;
+}
+
+/* --- 4. Card Front Content --- */
+.flip-card-front {
+  text-align: center;
+}
+
+.card-header {
+  margin-bottom: 16px;
+}
+
+.signal-icon-modern {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 auto 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.signal-title {
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.signal-description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 90%;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+.hover-indicator {
+  position: absolute;
+  bottom: 24px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- 5. Card Back Content --- */
+.flip-card-back {
+  background: #283347; /* A slightly lighter dark shade */
+  border: 1px solid; /* Border color is set inline */
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.features-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.features-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.features-list-back {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Pushes button to the bottom */
+}
+
+.feature-item-back {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.feature-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.launch-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-top: auto; /* Aligns to bottom */
+}
+
+.launch-btn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+
+/* --- 6. Footer Section --- */
+.footer-section {
+  background: var(--background-dark);
+  padding: 60px 20px 40px;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.footer-column h3 { font-size: 1.5rem; }
+.footer-column h4 { font-size: 1.1rem; color: var(--text-secondary); }
+.footer-column p { color: var(--text-secondary); line-height: 1.6; }
+
+.quick-links, .social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quick-links span, .social-links span {
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.quick-links span:hover, .social-links span:hover {
+  color: white;
+  transform: translateX(5px);
+}
+
+/* --- 7. Responsive Design --- */
+@media (max-width: 992px) {
+  .signal-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2.5rem;
+  }
+  .signal-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}

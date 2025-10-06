@@ -40,10 +40,10 @@ export default function Mode1() {
 
       if (response.ok && jsonData.x && jsonData.y) {
         setFullSignalData(jsonData);
-        
+
         const initialData = {
           x: jsonData.x.slice(0, length),
-          y: jsonData.y.slice(0, length)
+          y: jsonData.y.slice(0, length),
         };
         setCurrentViewData(initialData);
         setEcgData(initialData);
@@ -73,26 +73,31 @@ export default function Mode1() {
     let interval;
     if (isPlaying && fullSignalData) {
       let currentIndex = length;
-      
+
       interval = setInterval(() => {
         if (currentIndex >= fullSignalData.x.length) {
           currentIndex = length;
         }
 
-        const newX = fullSignalData.x.slice(currentIndex - length, currentIndex);
-        const newY = fullSignalData.y.slice(currentIndex - length, currentIndex);
-        
+        const newX = fullSignalData.x.slice(
+          currentIndex - length,
+          currentIndex
+        );
+        const newY = fullSignalData.y.slice(
+          currentIndex - length,
+          currentIndex
+        );
+
         const newData = {
           x: newX,
-          y: newY
+          y: newY,
         };
-        
+
         setCurrentViewData(newData);
         setEcgData(newData);
         setOffset(currentIndex - length);
-        
+
         currentIndex += Math.floor(length / 10);
-        
       }, playbackSpeed);
     }
     return () => clearInterval(interval);
@@ -108,7 +113,7 @@ export default function Mode1() {
     if (fullSignalData && !isPlaying) {
       const newData = {
         x: fullSignalData.x.slice(offset, offset + length),
-        y: fullSignalData.y.slice(offset, offset + length)
+        y: fullSignalData.y.slice(offset, offset + length),
       };
       setCurrentViewData(newData);
       setEcgData(newData);
@@ -250,7 +255,7 @@ export default function Mode1() {
               if (fullSignalData) {
                 const initialData = {
                   x: fullSignalData.x.slice(0, 2000),
-                  y: fullSignalData.y.slice(0, 2000)
+                  y: fullSignalData.y.slice(0, 2000),
                 };
                 setCurrentViewData(initialData);
                 setEcgData(initialData);
@@ -359,7 +364,10 @@ export default function Mode1() {
                       color: "white",
                       showline: true,
                       linecolor: "white",
-                      range: [currentViewData.x[0], currentViewData.x[currentViewData.x.length - 1]]
+                      range: [
+                        currentViewData.x[0],
+                        currentViewData.x[currentViewData.x.length - 1],
+                      ],
                     },
                     yaxis: {
                       title: { text: "Voltage (mV)", font: { color: "white" } },
@@ -396,19 +404,27 @@ export default function Mode1() {
                 </h4>
                 <ul className="mode1-explanation-list">
                   <li className="mode1-explanation-item">
-                    <span className="mode1-explanation-strong">Start Monitor</span>
+                    <span className="mode1-explanation-strong">
+                      Start Monitor
+                    </span>
                     : Click to begin real-time streaming
                   </li>
                   <li className="mode1-explanation-item">
-                    <span className="mode1-explanation-strong">Window Size</span>
+                    <span className="mode1-explanation-strong">
+                      Window Size
+                    </span>
                     : Adjust how many samples are visible at once
                   </li>
                   <li className="mode1-explanation-item">
-                    <span className="mode1-explanation-strong">Scroll Speed</span>
+                    <span className="mode1-explanation-strong">
+                      Scroll Speed
+                    </span>
                     : Control how fast the signal moves
                   </li>
                   <li className="mode1-explanation-item">
-                    <span className="mode1-explanation-strong">Green waveform</span>
+                    <span className="mode1-explanation-strong">
+                      Green waveform
+                    </span>
                     : Live ECG signal display
                   </li>
                 </ul>
@@ -418,7 +434,9 @@ export default function Mode1() {
             <div className="mode1-placeholder-container">
               <p className="mode1-placeholder-text">No ECG data to display</p>
               <p className="mode1-placeholder-text">
-                {fullSignalLoading ? "Loading full signal..." : "Select patient and recording"}
+                {fullSignalLoading
+                  ? "Loading full signal..."
+                  : "Select patient and recording"}
               </p>
             </div>
           )}
