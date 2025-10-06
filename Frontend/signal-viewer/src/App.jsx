@@ -57,7 +57,7 @@ import Mode4 from "./components/ECG/mode4";
 import MainHome from "./components/MainHome";
 import MedicalSignals from "./components/Medical/MedicalSignals";
 import AudioSignals from "./components/Audio/AudioSignals";
-import RadarSignals from "./components/Radar/RadarSignals";
+import RadarSignals from "./components/Radar/RadarSignals"; // ✅ Now this will work
 
 // ECG specific (keep for backward compatibility)
 import ECGHome from "./components/ECG/ecg_home";

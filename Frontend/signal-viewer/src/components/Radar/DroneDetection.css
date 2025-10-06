@@ -1,0 +1,299 @@
+.drone-detection-container {
+  background: linear-gradient(135deg, rgba(45, 52, 54, 0.9), rgba(99, 110, 114, 0.8));
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 30px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.drone-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.drone-header h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.drone-header p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+/* Upload Area */
+.upload-area {
+  border: 3px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(238, 90, 36, 0.1));
+}
+
+.upload-area:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 36, 0.2));
+  transform: translateY(-2px);
+}
+
+.upload-prompt {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.file-types {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+/* File Selected */
+.file-selected {
+  display: flex;
+  justify-content: center;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(116, 185, 255, 0.2), rgba(9, 132, 227, 0.2));
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.file-icon {
+  font-size: 2rem;
+}
+
+.file-name {
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.file-size {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+}
+
+/* Audio Preview */
+.audio-preview {
+  margin: 20px 0;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 160, 133, 0.1));
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.audio-preview h3 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.audio-player {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.analyze-button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+}
+
+.analyze-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4);
+}
+
+.analyze-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reset-button {
+  background: linear-gradient(135deg, #636e72, #2d3436);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 15px 25px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Server Status */
+.server-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.server-status.checking {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 166, 35, 0.2));
+  color: #fbbf24;
+  border: 2px solid rgba(251, 191, 36, 0.5);
+}
+
+.server-status.connected {
+  background: linear-gradient(135deg, rgba(0, 184, 148, 0.2), rgba(0, 160, 133, 0.2));
+  color: #00b894;
+  border: 2px solid rgba(0, 184, 148, 0.5);
+}
+
+.server-status.disconnected {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 36, 0.2));
+  color: #ff6b6b;
+  border: 2px solid rgba(255, 107, 107, 0.5);
+}
+
+/* Processing Status */
+.processing-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(116, 185, 255, 0.2), rgba(9, 132, 227, 0.2));
+  border: 2px solid rgba(116, 185, 255, 0.3);
+  border-radius: 12px;
+  margin: 20px 0;
+  color: white;
+}
+
+/* Results */
+.results-container {
+  margin-top: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(45, 52, 54, 0.8), rgba(99, 110, 114, 0.7));
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.primary-result.drone-detected {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 36, 0.2));
+  border: 2px solid #ff6b6b;
+}
+
+.primary-result.no-drone {
+  background: linear-gradient(135deg, rgba(0, 184, 148, 0.2), rgba(0, 160, 133, 0.2));
+  border: 2px solid #00b894;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+  transition: width 0.5s ease;
+}
+
+/* Error */
+.error-container {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 36, 0.2));
+  border: 2px solid #ff6b6b;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Rest of the existing styles with color updates... */
+.retry-button, .processing-note, .success-note, .error-help, 
+.processing-method, .results-container h3, .primary-result, 
+.result-icon, .result-content h4, .confidence, .filename,
+.detailed-results h4, .result-item, .label, .confidence-bar,
+.percentage, .error-container h3, .error-container p {
+  /* Keep existing structure but with updated colors matching the theme */
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .analyze-button, .reset-button {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .primary-result {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .result-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .confidence-bar {
+    width: 100%;
+  }
+}
