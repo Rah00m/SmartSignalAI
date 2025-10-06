@@ -132,7 +132,6 @@ export default function Mode6() {
     };
   };
 
-  // إنشاء بيانات محاكاة
   const createMockData = () => {
     const samplingRate = 360;
     const duration = 30;
@@ -142,7 +141,6 @@ export default function Mode6() {
     for (let i = 0; i < signalLength; i++) {
       const t = i / samplingRate;
 
-      // نبضات قلب منتظمة مع بعض الاختلافات العشوائية
       const baseHeartbeat =
         Math.sin(2 * Math.PI * 1.2 * t) *
           Math.exp(-Math.pow((t % 0.8) - 0.3, 2) * 100) +
@@ -150,7 +148,6 @@ export default function Mode6() {
           0.3 *
           Math.exp(-Math.pow((t % 0.8) - 0.6, 2) * 50);
 
-      // نضيف اختلافات عشوائية كل 5 ثواني
       const variation =
         i % (5 * samplingRate) < 0.5 * samplingRate
           ? Math.random() * 0.8 - 0.4
@@ -168,7 +165,6 @@ export default function Mode6() {
     };
   };
 
-  // تهيئة بيانات XOR
   const initializeXOR = (data) => {
     const samplingRate = data.sampling_rate;
     const chunkSamples = Math.floor(timeChunk * samplingRate);
@@ -204,7 +200,6 @@ export default function Mode6() {
     setCurrentTime(0);
   };
 
-  // تطبيق XOR بصورة بسيطة وواضحة
   const applyXOR = (chunks, currentIndex) => {
     if (chunks.length === 0 || currentIndex < 1) return [];
 
@@ -240,7 +235,6 @@ export default function Mode6() {
     return xorResult;
   };
 
-  // تشغيل/إيقاف العرض
   const togglePlay = () => {
     if (!ecgData || xorData.length === 0) return;
 
@@ -268,7 +262,6 @@ export default function Mode6() {
     }
   };
 
-  // استخدام بيانات محاكاة
   const useMockData = () => {
     setLoading(true);
     setTimeout(() => {
@@ -280,7 +273,6 @@ export default function Mode6() {
     }, 1000);
   };
 
-  // رسم XOR Viewer
   const renderXORViewer = () => {
     if (!ecgData || xorData.length === 0 || currentTime >= xorData.length) {
       return (
@@ -534,7 +526,7 @@ export default function Mode6() {
   return (
     <div className="mode6-container">
       <div className="mode6-header">
-        <button className="mode6-back-button" onClick={() => navigate("/")}>
+        <button className="mode6-back-button" onClick={() => navigate("/ecg")}>
           🏠 Back to Home
         </button>
         <h1 className="mode6-title">🔄 XOR Graph - ECG Signal Viewer</h1>

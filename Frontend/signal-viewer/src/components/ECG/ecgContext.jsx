@@ -11,13 +11,11 @@ export const ECGProvider = ({ children }) => {
   const [patients, setPatients] = useState([]);
   const [recordings, setRecordings] = useState([]);
 
-  // يمكن إضافة useEffect هنا لجلب المرضى تلقائياً إذا أردت
-  // أو يمكن جلبهم من المكون Home كما في الكود أعلاه
 
   return (
     <ECGContext.Provider
       value={{
-        // البيانات
+        // 
         selectedPatient,
         selectedRecording,
         ecgData,

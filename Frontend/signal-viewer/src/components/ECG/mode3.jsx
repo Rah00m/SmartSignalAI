@@ -265,7 +265,7 @@ export default function Mode3() {
   return (
     <div className="mode3-container">
       <div className="mode3-header">
-        <button className="mode3-back-button" onClick={() => navigate("/")}>
+        <button className="mode3-back-button" onClick={() => navigate("/ecg")}>
           🏠 Back to Home
         </button>
         <h1 className="mode3-title">🌀 Mode 3 - Polar Graph Visualization</h1>

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import DroneDetection from './DroneDetection';
-import RadioFrequency from './RadioFrequency';
-import './RadarSignals.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DroneDetection from "./DroneDetection";
+import RadioFrequency from "./RadioFrequency";
+import "./RadarSignals.css";
 
 const RadarSignals = () => {
-  const [activeTab, setActiveTab] = useState('drone');
+  const [activeTab, setActiveTab] = useState("drone");
+  const navigate = useNavigate();
 
   return (
     <div className="radar-signals-container">
@@ -16,15 +18,22 @@ const RadarSignals = () => {
 
       {/* Navigation Tabs */}
       <div className="radar-tabs">
-        <button 
-          className={`radar-tab ${activeTab === 'drone' ? 'active' : ''}`}
-          onClick={() => setActiveTab('drone')}
+        <button
+          className="back-button"
+          onClick={() => navigate("/")}
+          type="button"
+        >
+          🏠 Back to Home
+        </button>
+        <button
+          className={`radar-tab ${activeTab === "drone" ? "active" : ""}`}
+          onClick={() => setActiveTab("drone")}
         >
           🚁 Drone Detection
         </button>
-        <button 
-          className={`radar-tab ${activeTab === 'rf' ? 'active' : ''}`}
-          onClick={() => setActiveTab('rf')}
+        <button
+          className={`radar-tab ${activeTab === "rf" ? "active" : ""}`}
+          onClick={() => setActiveTab("rf")}
         >
           📡 RF Signals Viewer
         </button>
@@ -32,8 +41,8 @@ const RadarSignals = () => {
 
       {/* Content */}
       <div className="radar-content">
-        {activeTab === 'drone' && <DroneDetection />}
-        {activeTab === 'rf' && <RadioFrequency />}
+        {activeTab === "drone" && <DroneDetection />}
+        {activeTab === "rf" && <RadioFrequency />}
       </div>
     </div>
   );

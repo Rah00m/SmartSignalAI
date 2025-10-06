@@ -6,6 +6,7 @@
   color: #333;
   padding: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
 }
 
 .home-header {
@@ -16,6 +17,7 @@
   border-radius: 15px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
 }
 
 .home-title {
@@ -40,6 +42,7 @@
   gap: 30px;
   max-width: 1400px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Controls Panel */
@@ -52,6 +55,9 @@
   height: fit-content;
   position: sticky;
   top: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 .home-controls-title {
@@ -70,6 +76,8 @@
   background: rgba(102, 126, 234, 0.05);
   border-radius: 8px;
   border-left: 4px solid #667eea;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-control-label {
@@ -78,6 +86,7 @@
   font-weight: 600;
   color: #667eea;
   font-size: 0.9em;
+  width: 100%;
 }
 
 .home-control-select {
@@ -89,6 +98,8 @@
   color: #333;
   font-size: 14px;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .home-control-select:focus {
@@ -103,6 +114,8 @@
   background: rgba(118, 75, 162, 0.05);
   border-radius: 8px;
   border-left: 4px solid #764ba2;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-setting-label {
@@ -111,6 +124,7 @@
   font-weight: 600;
   color: #764ba2;
   font-size: 0.9em;
+  width: 100%;
 }
 
 .home-setting-input {
@@ -122,6 +136,8 @@
   color: #333;
   font-size: 14px;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .home-setting-input:focus {
@@ -135,6 +151,7 @@
   color: #667eea;
   margin-top: 5px;
   font-style: italic;
+  width: 100%;
 }
 
 .home-hint-text {
@@ -142,6 +159,7 @@
   color: #666;
   margin-top: 5px;
   font-style: italic;
+  width: 100%;
 }
 
 /* Selection Info */
@@ -151,6 +169,8 @@
   background: rgba(102, 126, 234, 0.1);
   border-radius: 8px;
   border: 1px solid rgba(102, 126, 234, 0.2);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-selection-title {
@@ -158,6 +178,7 @@
   margin-bottom: 15px;
   color: #667eea;
   font-weight: 600;
+  width: 100%;
 }
 
 .home-selection-item {
@@ -166,6 +187,8 @@
   margin-bottom: 8px;
   padding: 6px 0;
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .home-selection-label {
@@ -186,6 +209,8 @@
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-modes-title {
@@ -202,6 +227,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  width: 100%;
 }
 
 .home-mode-button {
@@ -218,6 +244,8 @@
   text-align: left;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid transparent;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-mode-button:hover:not(:disabled) {
@@ -243,6 +271,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: 100%;
 }
 
 .home-mode-name {
@@ -273,6 +302,9 @@
 .mode5-btn {
   border-left: 4px solid #1dd1a1;
 }
+.mode6-btn {
+  border-left: 4px solid #ff9f43;
+}
 
 .mode1-btn:hover:not(:disabled) {
   background: rgba(255, 107, 107, 0.05);
@@ -289,6 +321,9 @@
 .mode5-btn:hover:not(:disabled) {
   background: rgba(29, 209, 161, 0.05);
 }
+.mode6-btn:hover:not(:disabled) {
+  background: rgba(255, 159, 67, 0.05);
+}
 
 /* Mode Hint */
 .home-mode-hint {
@@ -298,6 +333,8 @@
   border-radius: 8px;
   border: 1px solid rgba(102, 126, 234, 0.2);
   text-align: center;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-mode-hint p {
@@ -315,6 +352,8 @@
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .home-status-ready {
@@ -326,6 +365,8 @@
   border-radius: 8px;
   border: 1px solid rgba(34, 197, 94, 0.3);
   color: #166534;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .home-status-waiting {
@@ -337,6 +378,8 @@
   border-radius: 8px;
   border: 1px solid rgba(245, 158, 11, 0.3);
   color: #854d0e;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .home-status-icon {
@@ -366,6 +409,8 @@
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: #1e40af;
   margin-top: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .home-ecg-icon {
@@ -375,6 +420,43 @@
 .home-ecg-text {
   font-weight: 500;
   font-size: 0.95em;
+}
+
+/* Back Button */
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.back-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.back-button:active {
+  transform: translateY(-1px);
+}
+
+.back-button::before {
+  content: "←";
+  font-size: 16px;
 }
 
 /* Responsive Design */
@@ -414,6 +496,14 @@
   .home-mode-icon {
     font-size: 1.3em;
   }
+
+  .back-button {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
 }
 
 @media (max-width: 480px) {
@@ -443,6 +533,11 @@
 
   .home-mode-icon {
     font-size: 1.5em;
+  }
+
+  .back-button {
+    padding: 10px 20px;
+    font-size: 13px;
   }
 }
 

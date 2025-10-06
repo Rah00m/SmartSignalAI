@@ -100,14 +100,21 @@ function ECGHome() {
   };
 
   return (
+
     <div className="home-container">
+      <button className="back-button" onClick={() => navigate("/")}>
+          Back to Home
+        </button>
       <div className="home-header">
+        
         <h1 className="home-title">SmartSignalAI</h1>
+
         <h2 className="home-subtitle">Medical Signal Analysis System</h2>
       </div>
 
+
       <div className="home-content">
-        {/* حاوية المدخلات على اليسار */}
+
         <div className="home-controls-panel">
           <h3 className="home-controls-title">🎯 Patient Configuration</h3>
 
@@ -248,7 +255,7 @@ function ECGHome() {
               onClick={() => navigateToMode("/mode3")}
               disabled={!selectedPatient || !selectedRecording}
             >
-              <span className="home-mode-icon">📈</span>
+              <span className="home-mode-icon">🛞</span>
               <span className="home-mode-text">
                 <span className="home-mode-name">Mode 3 - Polar Graph</span>
                 <span className="home-mode-description">
@@ -291,17 +298,16 @@ function ECGHome() {
               onClick={() => navigateToMode("/mode6")}
               disabled={!selectedPatient || !selectedRecording}
             >
-              <span className="home-mode-icon">🧠</span>
+              <span className="home-mode-icon">📈</span>
               <span className="home-mode-text">
                 <span className="home-mode-name">Mode 6 - Xor graph</span>
                 <span className="home-mode-description">
-                  Predict Disease from ECG channels analysis
+                  Xor graph for signal analysis
                 </span>
               </span>
             </button>
           </div>
 
-          {/* رسالة توجيهية */}
           {(!selectedPatient || !selectedRecording) && (
             <div className="home-mode-hint">
               <p>
@@ -312,7 +318,6 @@ function ECGHome() {
         </div>
       </div>
 
-      {/* عرض حالة البيانات */}
       <div className="home-data-status">
         {selectedPatient && selectedRecording ? (
           <div className="home-status-ready">

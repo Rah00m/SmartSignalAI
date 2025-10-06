@@ -391,7 +391,7 @@ export default function Mode2() {
       <div className="mode2-header">
         <button
           className="mode2-back-button"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/ecg")}
           type="button"
         >
           🏠 Back to Home

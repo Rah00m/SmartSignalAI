@@ -348,7 +348,7 @@ export default function Mode5() {
   return (
     <div className="mode5-container">
       <div className="mode5-header">
-        <button className="mode5-back-button" onClick={() => navigate("/")}>
+        <button className="mode5-back-button" onClick={() => navigate("/ecg")}>
           🏠 Back to Home
         </button>
         <h1 className="mode5-title">🧠 Mode 5 - AI Comprehensive Analysis</h1>

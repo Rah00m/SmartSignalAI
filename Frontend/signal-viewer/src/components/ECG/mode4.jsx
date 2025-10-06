@@ -792,7 +792,7 @@ export default function Mode4() {
   return (
     <div className="mode4-container">
       <div className="mode4-header">
-        <button className="mode4-back-button" onClick={() => navigate("/")}>
+        <button className="mode4-back-button" onClick={() => navigate("/ecg")}>
           🏠 Back to Home
         </button>
         <h1 className="mode4-title">📊 Mode 4 - Cumulative Scatter Plot</h1>

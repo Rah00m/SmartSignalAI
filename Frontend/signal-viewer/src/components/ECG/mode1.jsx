@@ -123,7 +123,7 @@ export default function Mode1() {
   return (
     <div className="mode1-container">
       <div className="mode1-header">
-        <button className="mode1-back-button" onClick={() => navigate("/")}>
+        <button className="mode1-back-button" onClick={() => navigate("/ecg")}>
           Back to Home
         </button>
         <h1 className="mode1-title">Mode 1 - Real-time ECG Monitor</h1>
