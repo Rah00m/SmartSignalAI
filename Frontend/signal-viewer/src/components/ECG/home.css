@@ -1,0 +1,478 @@
+/* home.css - Dashboard Version */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+  color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #333;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00ff88, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.dashboard-subtitle {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  font-weight: normal;
+  margin-right: 50px;
+}
+
+/* Controls Panel */
+.dashboard-controls-panel {
+  background: rgba(30, 30, 30, 0.8);
+  border-bottom: 1px solid #333;
+  padding: 1.5rem 2rem;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-label {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.control-select,
+.control-input {
+  background: rgba(40, 40, 40, 0.8);
+  border: 1px solid #333;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.control-select:focus,
+.control-input:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+}
+
+.control-select:hover,
+.control-input:hover {
+  border-color: #444;
+}
+
+.loading-text {
+  color: #ffa726;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.hint-text {
+  color: #999;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Selection Info */
+.selection-info {
+  background: rgba(40, 40, 40, 0.6);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  border-left: 4px solid #00ff88;
+}
+
+.selection-title {
+  margin: 0 0 1rem 0;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.selection-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+}
+
+.selection-item:last-child {
+  border-bottom: none;
+}
+
+.selection-label {
+  color: #ccc;
+  font-size: 0.85rem;
+}
+
+.selection-value {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+  display: flex;
+  background: rgba(20, 20, 20, 0.8);
+  border-bottom: 1px solid #333;
+  padding: 0 2rem;
+  gap: 2px;
+  overflow-x: auto;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  color: #999;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tab-button:hover {
+  background: rgba(40, 40, 40, 0.8);
+  color: #fff;
+}
+
+.tab-button.active {
+  background: rgba(40, 40, 40, 0.8);
+  color: #fff;
+  border-bottom-color: #00ff88;
+}
+
+.tab-icon {
+  font-size: 1.1em;
+}
+
+.tab-text {
+  font-weight: 500;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  flex: 1;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+  padding: 0;
+}
+
+.mode-container {
+  height: 100%;
+  min-height: 600px;
+}
+
+/* No Selection Message */
+.no-selection-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #999;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 12px;
+  margin: 2rem;
+  border: 1px solid #333;
+}
+
+.selection-icon {
+  font-size: 4em;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-selection-message h3 {
+  color: #fff;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.no-selection-message p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+/* Status Bar */
+.dashboard-status {
+  background: rgba(20, 20, 20, 0.95);
+  padding: 1rem 2rem;
+  border-top: 1px solid #333;
+  backdrop-filter: blur(10px);
+}
+
+.status-ready,
+.status-waiting {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-ready {
+  color: #00ff88;
+}
+
+.status-waiting {
+  color: #ffa726;
+}
+
+.status-icon {
+  font-size: 1.1em;
+}
+
+.status-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-text strong {
+  color: #fff;
+}
+
+/* Mode Components Styling */
+.mode-container > div {
+  height: 100%;
+}
+
+/* Ensure mode components use full height */
+.mode1-container,
+.mode2-container,
+.mode3-container,
+.mode4-container,
+.mode5-container,
+.mode6-container {
+  min-height: 600px;
+  background: transparent;
+}
+
+/* Remove back buttons from modes since we're in dashboard */
+.mode1-back-button,
+.mode2-back-button,
+.mode3-back-button,
+.mode4-back-button,
+.mode5-back-button,
+.mode6-back-button {
+  display: none !important;
+}
+
+/* Adjust mode headers for dashboard */
+.mode1-header,
+.mode2-header,
+.mode3-header,
+.mode4-header,
+.mode5-header,
+.mode6-header {
+  background: rgba(20, 20, 20, 0.95);
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #333;
+  margin-bottom: 0;
+  backdrop-filter: blur(10px);
+}
+
+.mode1-title,
+.mode2-title,
+.mode3-title,
+.mode4-title,
+.mode5-title,
+.mode6-title {
+  margin: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Make mode content areas fill available space */
+.mode1-content,
+.mode2-content,
+.mode3-content,
+.mode4-content,
+.mode5-content,
+.mode6-content {
+  height: calc(100% - 80px);
+  padding: 1.5rem 2rem;
+}
+
+/* Scrollbar Styling */
+.dashboard-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dashboard-tabs::-webkit-scrollbar-track {
+  background: rgba(40, 40, 40, 0.8);
+  border-radius: 3px;
+}
+
+.dashboard-tabs::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 3px;
+}
+
+.dashboard-tabs::-webkit-scrollbar-thumb:hover {
+  background: #00cc6a;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .controls-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-tabs {
+    padding: 0 1.5rem;
+  }
+
+  .tab-button {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dashboard-controls-panel {
+    padding: 1rem 1.5rem;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .dashboard-tabs {
+    padding: 0 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .selection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mode1-content,
+  .mode2-content,
+  .mode3-content,
+  .mode4-content,
+  .mode5-content,
+  .mode6-content {
+    padding: 1rem 1.5rem;
+  }
+
+  .dashboard-status {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.75rem;
+  }
+
+  .tab-button {
+    min-width: 120px;
+    font-size: 0.8rem;
+  }
+
+  .tab-text {
+    font-size: 0.8rem;
+  }
+
+  .tab-icon {
+    font-size: 1.1em;
+  }
+
+  .selection-info {
+    padding: 1rem;
+  }
+
+  .no-selection-message {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .no-selection-message h3 {
+    font-size: 1.25rem;
+  }
+
+  .no-selection-message p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for smooth transitions */
+.dashboard-tabs,
+.control-select,
+.control-input,
+.tab-button {
+  transition: all 0.3s ease;
+}
+
+/* Glass morphism effect for modern look */
+.dashboard-controls-panel,
+.selection-info,
+.dashboard-tabs {
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced focus states for accessibility */
+.tab-button:focus-visible,
+.control-select:focus-visible,
+.control-input:focus-visible {
+  outline: 2px solid #00ff88;
+  outline-offset: 2px;
+}
