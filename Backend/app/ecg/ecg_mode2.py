@@ -598,4 +598,5 @@ def get_available_channels(patient: str, recording: str):
         }
         
     except Exception as e:
+
         return {"error": f"Error getting channels: {str(e)}"}

@@ -388,36 +388,7 @@ export default function Mode2() {
 
   return (
     <div className="mode2-container">
-      <div className="mode2-header">
-        <button
-          className="mode2-back-button"
-          onClick={() => navigate("/")}
-          type="button"
-        >
-          🏠 Back to Home
-        </button>
-        <h1 className="mode2-title">🎯 Mode 2 - Abnormal Beat Detection</h1>
-      </div>
 
-      {/* معلومات المريض */}
-      <div className="mode2-patient-info">
-        <div className="mode2-patient-item">
-          <div className="mode2-patient-label">Patient</div>
-          <div className="mode2-patient-value">
-            {selectedPatient || "Not selected"}
-          </div>
-        </div>
-        <div className="mode2-patient-item">
-          <div className="mode2-patient-label">Recording</div>
-          <div className="mode2-patient-value">
-            {selectedRecording || "Not selected"}
-          </div>
-        </div>
-        <div className="mode2-patient-item">
-          <div className="mode2-patient-label">Channel</div>
-          <div className="mode2-patient-value">{channel.toUpperCase()}</div>
-        </div>
-      </div>
 
       {(!selectedPatient || !selectedRecording) && (
         <div className="mode2-warning">

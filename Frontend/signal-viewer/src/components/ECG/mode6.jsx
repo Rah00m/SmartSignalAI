@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Plot from "react-plotly.js";
 import { useNavigate } from "react-router-dom";
 import { useECG } from "./ecgContext";
@@ -18,11 +18,12 @@ export default function Mode6() {
   const [currentTime, setCurrentTime] = useState(0);
   const [xorData, setXorData] = useState([]);
   const [similarityThreshold, setSimilarityThreshold] = useState(0.1);
+  const [autoLoaded, setAutoLoaded] = useState(false);
 
   const playIntervalRef = useRef(null);
+  const initialLoadRef = useRef(false);
 
-  // جلب بيانات ECG باستخدام endpoint موجود
-  const fetchECGData = async () => {
+  const fetchECGData = useCallback(async () => {
     if (!selectedPatient || !selectedRecording) return;
 
     setLoading(true);
@@ -31,14 +32,16 @@ export default function Mode6() {
     setXorData([]);
     setCurrentTime(0);
     setIsPlaying(false);
+    setAutoLoaded(true);
 
     if (playIntervalRef.current) {
       clearInterval(playIntervalRef.current);
+      playIntervalRef.current = null;
     }
 
     try {
-      const apiUrl = `http://127.0.0.1:8000/ecg/mode1/data?patient=${selectedPatient}&recording=${selectedRecording}&channel=${channels[0]}`;
-      console.log("🔄 Fetching ECG data for XOR:", apiUrl);
+      const apiUrl = `http://127.0.0.1:8000/ecg/mode1/full-signal?patient=${selectedPatient}&recording=${selectedRecording}&channel=${channels[0]}`;
+      console.log("🔄 Auto-fetching ECG data for XOR:", apiUrl);
 
       const response = await fetch(apiUrl);
 
@@ -54,6 +57,7 @@ export default function Mode6() {
         const processedData = processECGData(jsonData, channels[0]);
         setEcgData(processedData);
         initializeXOR(processedData);
+        setLoading(false);
       } else {
         await tryMode2Data();
       }
@@ -61,10 +65,10 @@ export default function Mode6() {
       console.error("💥 Error fetching ECG data:", error);
       await tryMode2Data();
     }
-  };
+  }, [selectedPatient, selectedRecording, channels]);
 
   // محاولة جلب البيانات من Mode 2
-  const tryMode2Data = async () => {
+  const tryMode2Data = useCallback(async () => {
     try {
       const apiUrl = `http://127.0.0.1:8000/ecg/mode2/analyze-optimized?patient=${selectedPatient}&recording=${selectedRecording}&channel=${channels[0]}&threshold=0.05&max_beats=100`;
       console.log("🔄 Trying Mode 2 data:", apiUrl);
@@ -82,20 +86,19 @@ export default function Mode6() {
         const processedData = processMode2Data(jsonData, channels[0]);
         setEcgData(processedData);
         initializeXOR(processedData);
-      } else {
-        setError("No valid ECG data found in either mode");
-      }
+      } 
     } catch (error) {
-      setError(`Both modes failed: ${error.message}`);
+      console.error("Mode 2 failed, using mock data:", error);
+
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedPatient, selectedRecording, channels]);
 
   // معالجة بيانات Mode 1
-  const processECGData = (data, channel) => {
+  const processECGData = useCallback((data, channel) => {
     const signal = data.signal || data.ecg_signal || [];
-    const samplingRate = data.sampling_rate || 360;
+    const samplingRate = data.sampling_rate || 1000;
 
     return {
       signals: [signal],
@@ -104,10 +107,9 @@ export default function Mode6() {
       duration: signal.length / samplingRate,
       original_data: data,
     };
-  };
+  }, []);
 
-  // معالجة بيانات Mode 2
-  const processMode2Data = (data, channel) => {
+  const processMode2Data = useCallback((data, channel) => {
     const allBeats = [
       ...(data.beat_data?.normal_beats || []),
       ...(data.abnormal_beats || []),
@@ -120,7 +122,7 @@ export default function Mode6() {
       }
     });
 
-    const samplingRate = 360;
+    const samplingRate = 1000;
 
     return {
       signals: [combinedSignal],
@@ -130,82 +132,9 @@ export default function Mode6() {
       original_data: data,
       beats: allBeats,
     };
-  };
+  }, []);
 
-  // إنشاء بيانات محاكاة
-  const createMockData = () => {
-    const samplingRate = 360;
-    const duration = 30;
-    const signalLength = duration * samplingRate;
-
-    const mockSignal = [];
-    for (let i = 0; i < signalLength; i++) {
-      const t = i / samplingRate;
-
-      // نبضات قلب منتظمة مع بعض الاختلافات العشوائية
-      const baseHeartbeat =
-        Math.sin(2 * Math.PI * 1.2 * t) *
-          Math.exp(-Math.pow((t % 0.8) - 0.3, 2) * 100) +
-        Math.sin(2 * Math.PI * 0.5 * t) *
-          0.3 *
-          Math.exp(-Math.pow((t % 0.8) - 0.6, 2) * 50);
-
-      // نضيف اختلافات عشوائية كل 5 ثواني
-      const variation =
-        i % (5 * samplingRate) < 0.5 * samplingRate
-          ? Math.random() * 0.8 - 0.4
-          : 0;
-
-      mockSignal.push(baseHeartbeat + variation);
-    }
-
-    return {
-      signals: [mockSignal],
-      channels: channels,
-      sampling_rate: samplingRate,
-      duration: duration,
-      is_mock: true,
-    };
-  };
-
-  // تهيئة بيانات XOR
-  const initializeXOR = (data) => {
-    const samplingRate = data.sampling_rate;
-    const chunkSamples = Math.floor(timeChunk * samplingRate);
-
-    if (
-      !data.signals ||
-      data.signals.length === 0 ||
-      data.signals[0].length === 0
-    ) {
-      setError("No signal data available");
-      return;
-    }
-
-    const signal = data.signals[0];
-    const chunks = [];
-
-    for (let i = 0; i < signal.length; i += chunkSamples) {
-      const chunk = {
-        startIndex: i,
-        endIndex: i + chunkSamples,
-        startTime: i / samplingRate,
-        endTime: (i + chunkSamples) / samplingRate,
-        data: [signal.slice(i, i + chunkSamples)],
-      };
-
-      if (chunk.data[0].length > 0) {
-        chunks.push(chunk);
-      }
-    }
-
-    console.log(`✅ Created ${chunks.length} chunks of ${timeChunk}s each`);
-    setXorData(chunks);
-    setCurrentTime(0);
-  };
-
-  // تطبيق XOR بصورة بسيطة وواضحة
-  const applyXOR = (chunks, currentIndex) => {
+  const applyXOR = useCallback((chunks, currentIndex) => {
     if (chunks.length === 0 || currentIndex < 1) return [];
 
     const currentChunk = chunks[currentIndex];
@@ -238,10 +167,44 @@ export default function Mode6() {
     });
 
     return xorResult;
-  };
+  }, [similarityThreshold]);
 
-  // تشغيل/إيقاف العرض
-  const togglePlay = () => {
+  const initializeXOR = useCallback((data) => {
+    const samplingRate = data.sampling_rate;
+    const chunkSamples = Math.floor(timeChunk * samplingRate);
+
+    if (
+      !data.signals ||
+      data.signals.length === 0 ||
+      data.signals[0].length === 0
+    ) {
+      setError("No signal data available");
+      return;
+    }
+
+    const signal = data.signals[0];
+    const chunks = [];
+
+    for (let i = 0; i < signal.length; i += chunkSamples) {
+      const chunk = {
+        startIndex: i,
+        endIndex: i + chunkSamples,
+        startTime: i / samplingRate,
+        endTime: (i + chunkSamples) / samplingRate,
+        data: [signal.slice(i, i + chunkSamples)],
+      };
+
+      if (chunk.data[0].length > 0) {
+        chunks.push(chunk);
+      }
+    }
+
+    console.log(`✅ Created ${chunks.length} chunks of ${timeChunk}s each`);
+    setXorData(chunks);
+    setCurrentTime(0);
+  }, [timeChunk]);
+
+  const togglePlay = useCallback(() => {
     if (!ecgData || xorData.length === 0) return;
 
     if (isPlaying) {
@@ -259,6 +222,7 @@ export default function Mode6() {
           const nextTime = prev + 1;
           if (nextTime >= xorData.length) {
             clearInterval(playIntervalRef.current);
+            playIntervalRef.current = null;
             setIsPlaying(false);
             return 0;
           }
@@ -266,21 +230,66 @@ export default function Mode6() {
         });
       }, intervalTime);
     }
-  };
+  }, [ecgData, xorData.length, isPlaying, speed]);
 
-  // استخدام بيانات محاكاة
-  const useMockData = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const mockData = createMockData();
-      setEcgData(mockData);
-      initializeXOR(mockData);
-      setLoading(false);
-      console.log("✅ Using mock ECG data for demonstration");
-    }, 1000);
-  };
 
-  // رسم XOR Viewer
+  const currentXOR = useMemo(() => {
+    return applyXOR(xorData, currentTime);
+  }, [xorData, currentTime, applyXOR]);
+
+  useEffect(() => {
+    if (selectedPatient && selectedRecording && !initialLoadRef.current) {
+      initialLoadRef.current = true;
+      fetchECGData();
+    }
+  }, [selectedPatient, selectedRecording, fetchECGData]);
+
+  useEffect(() => {
+    if (selectedPatient && selectedRecording && autoLoaded) {
+      fetchECGData();
+    }
+  }, [channels]);
+
+  useEffect(() => {
+    if (ecgData) {
+      initializeXOR(ecgData);
+    }
+  }, [timeChunk, ecgData, initializeXOR]);
+
+  useEffect(() => {
+    if (isPlaying && playIntervalRef.current) {
+      clearInterval(playIntervalRef.current);
+      const intervalTime = 1000 / speed;
+      playIntervalRef.current = setInterval(() => {
+        setCurrentTime((prev) => {
+          const nextTime = prev + 1;
+          if (nextTime >= xorData.length) {
+            clearInterval(playIntervalRef.current);
+            playIntervalRef.current = null;
+            setIsPlaying(false);
+            return 0;
+          }
+          return nextTime;
+        });
+      }, intervalTime);
+    }
+  }, [speed, isPlaying, xorData.length]);
+
+  useEffect(() => {
+    return () => {
+      if (playIntervalRef.current) {
+        clearInterval(playIntervalRef.current);
+        playIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (ecgData && xorData.length > 0) {
+      setXorData(prev => [...prev]);
+    }
+  }, [similarityThreshold]);
+
   const renderXORViewer = () => {
     if (!ecgData || xorData.length === 0 || currentTime >= xorData.length) {
       return (
@@ -295,10 +304,8 @@ export default function Mode6() {
 
     const plotData = [];
 
-    if (currentTime > 0) {
-      const xorResult = applyXOR(xorData, currentTime);
-
-      xorResult.forEach((channelXOR, channelIdx) => {
+    if (currentTime > 0 && currentXOR.length > 0) {
+      currentXOR.forEach((channelXOR, channelIdx) => {
         const xValues = Array.from(
           { length: channelXOR.length },
           (_, i) => currentChunk.startTime + i / samplingRate
@@ -488,81 +495,9 @@ export default function Mode6() {
     );
   };
 
-  useEffect(() => {
-    if (ecgData) {
-      initializeXOR(ecgData);
-    }
-  }, [timeChunk]);
-
-  useEffect(() => {
-    if (ecgData && xorData.length > 0) {
-      const reprocessedData = processECGData(
-        ecgData.original_data || ecgData,
-        channels[0]
-      );
-      setEcgData(reprocessedData);
-      initializeXOR(reprocessedData);
-    }
-  }, [similarityThreshold]);
-
-  useEffect(() => {
-    if (isPlaying && playIntervalRef.current) {
-      clearInterval(playIntervalRef.current);
-      const intervalTime = 1000 / speed;
-      playIntervalRef.current = setInterval(() => {
-        setCurrentTime((prev) => {
-          const nextTime = prev + 1;
-          if (nextTime >= xorData.length) {
-            clearInterval(playIntervalRef.current);
-            setIsPlaying(false);
-            return 0;
-          }
-          return nextTime;
-        });
-      }, intervalTime);
-    }
-  }, [speed]);
-
-  useEffect(() => {
-    return () => {
-      if (playIntervalRef.current) {
-        clearInterval(playIntervalRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div className="mode6-container">
-      <div className="mode6-header">
-        <button className="mode6-back-button" onClick={() => navigate("/")}>
-          🏠 Back to Home
-        </button>
-        <h1 className="mode6-title">🔄 XOR Graph - ECG Signal Viewer</h1>
-        <p className="mode6-subtitle">
-          Visualize ECG with XOR-based chunk comparison
-        </p>
-      </div>
-
-      <div className="mode6-patient-info">
-        <div className="mode6-patient-item">
-          <div className="mode6-patient-label">Patient</div>
-          <div className="mode6-patient-value">
-            {selectedPatient || "Not selected"}
-          </div>
-        </div>
-        <div className="mode6-patient-item">
-          <div className="mode6-patient-label">Recording</div>
-          <div className="mode6-patient-value">
-            {selectedRecording || "Not selected"}
-          </div>
-        </div>
-        <div className="mode6-patient-item">
-          <div className="mode6-patient-label">Channel</div>
-          <div className="mode6-patient-value">
-            {channels.map((c) => c.toUpperCase()).join(", ")}
-          </div>
-        </div>
-      </div>
 
       {(!selectedPatient || !selectedRecording) && (
         <div className="mode6-warning">
@@ -657,18 +592,11 @@ export default function Mode6() {
           </div>
 
           <div className="mode6-control-buttons">
-            <button
-              className="mode6-load-button"
-              onClick={fetchECGData}
-              disabled={!selectedPatient || !selectedRecording || loading}
-            >
-              {loading ? "🔄 Loading..." : "📥 Load Real ECG Data"}
-            </button>
 
             <button
               className={`mode6-play-button ${isPlaying ? "playing" : ""}`}
               onClick={togglePlay}
-              disabled={!ecgData || xorData.length === 0}
+              disabled={!ecgData || xorData.length === 0 || loading}
             >
               {isPlaying ? "⏸️ Pause" : "▶️ Play XOR"}
             </button>
@@ -686,12 +614,12 @@ export default function Mode6() {
             <div className="mode6-info-panel">
               <h4>📈 Signal Info</h4>
               <p>Sampling Rate: {ecgData.sampling_rate} Hz</p>
-              <p>Total Duration: {ecgData.duration?.toFixed(1)}s</p>
               <p>Chunks: {xorData.length}</p>
               <p>
                 Current: {currentTime + 1}/{xorData.length}
               </p>
               {ecgData.is_mock && <p>🎭 Using Demo Data</p>}
+              {!ecgData.is_mock && <p>✅ Real ECG Data</p>}
             </div>
           )}
         </div>
@@ -701,17 +629,7 @@ export default function Mode6() {
             <div className="mode6-loading-container">
               <div className="mode6-spinner"></div>
               <p className="mode6-loading-text">Loading ECG data...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="mode6-error-container">
-              <p className="mode6-error-text">❌ {error}</p>
-              <div className="mode6-error-buttons">
-                <button className="mode6-retry-button" onClick={fetchECGData}>
-                  🔄 Retry Real Data
-                </button>
-              </div>
+              <p className="mode6-loading-subtext">This may take a few seconds</p>
             </div>
           )}
 
@@ -721,7 +639,7 @@ export default function Mode6() {
                 👈 Please select patient and recording from Home page
               </p>
             </div>
-          ) : !ecgData ? (
+          ) : !ecgData && !loading ? (
             <div className="mode6-placeholder-container">
               <p className="mode6-placeholder-text">📡 No ECG data loaded</p>
             </div>

@@ -13,5 +13,5 @@ ecg_router.include_router(mode1_records_router, prefix="/mode1", tags=["Mode 1"]
 ecg_router.include_router(mode4_router, prefix="/mode4", tags=["Mode 4"])
 ecg_router.include_router(mode3_router, prefix="/mode3", tags=["Mode 3"])
 ecg_router.include_router(mode2_router, prefix="/mode2", tags=["Mode 2"])  
-
 ecg_router.include_router(mode5_router, prefix="/mode5", tags=["Mode 5"])  
+
