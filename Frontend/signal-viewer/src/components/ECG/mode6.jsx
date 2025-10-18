@@ -232,12 +232,11 @@ export default function Mode6() {
     }
   }, [ecgData, xorData.length, isPlaying, speed]);
 
-  // استخدام useMemo لتحسين أداء XOR الحالي
+
   const currentXOR = useMemo(() => {
     return applyXOR(xorData, currentTime);
   }, [xorData, currentTime, applyXOR]);
 
-  // التحميل التلقائي عند تغيير المريض أو التسجيل
   useEffect(() => {
     if (selectedPatient && selectedRecording && !initialLoadRef.current) {
       initialLoadRef.current = true;
@@ -245,14 +244,12 @@ export default function Mode6() {
     }
   }, [selectedPatient, selectedRecording, fetchECGData]);
 
-  // إعادة التحميل عند تغيير القناة
   useEffect(() => {
     if (selectedPatient && selectedRecording && autoLoaded) {
       fetchECGData();
     }
   }, [channels]);
 
-  // تأثيرات محسنة
   useEffect(() => {
     if (ecgData) {
       initializeXOR(ecgData);
