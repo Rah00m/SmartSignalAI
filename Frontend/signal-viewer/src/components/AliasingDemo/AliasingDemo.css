@@ -1,0 +1,517 @@
+.aliasing-demo {
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: transparent;
+}
+
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.back-button:hover {
+  background: #667eea;
+  color: white;
+  transform: translateX(-5px);
+}
+
+.demo-header {
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 60px;
+}
+
+.demo-header h1 {
+  font-size: 2.5em;
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.demo-description {
+  font-size: 1.1em;
+  color: #666;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.error-message, .loading-message {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.error-message {
+  background: #fee;
+  border: 2px solid #f44336;
+  color: #c62828;
+}
+
+.loading-message {
+  background: #e3f2fd;
+  border: 2px solid #2196F3;
+  color: #1565c0;
+}
+
+.demo-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.control-section, .visualizer-section {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Audio Controls */
+.audio-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.file-selector h4 {
+  margin-bottom: 15px;
+  color: #2d3748;
+}
+
+.file-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.file-btn {
+  padding: 12px 20px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.file-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.file-btn.selected {
+  background: #667eea;
+  color: white;
+}
+
+.file-description {
+  margin-top: 10px;
+  font-style: italic;
+  color: #666;
+}
+
+.playback-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.control-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.play-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.play-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pause-btn {
+  background: #ff9800;
+  color: white;
+}
+
+.pause-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.stop-btn {
+  background: #f44336;
+  color: white;
+}
+
+.info-panel {
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-value.playing {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.info-value.paused {
+  color: #666;
+}
+
+.listening-guide {
+  padding: 15px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  border-left: 4px solid #2196F3;
+}
+
+.listening-guide h5 {
+  margin-bottom: 10px;
+  color: #1565c0;
+}
+
+.listening-guide ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.listening-guide li {
+  margin: 8px 0;
+  color: #555;
+}
+
+/* Audio Visualizer */
+.audio-visualizer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.visualizer-panel {
+  margin-bottom: 20px;
+}
+
+.visualizer-panel canvas {
+  display: block;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #1a1a2e;
+}
+
+.observation-panel {
+  padding: 20px;
+  background: #fff3e0;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+}
+
+.observation-panel h4 {
+  margin-bottom: 12px;
+  color: #e65100;
+}
+
+.observation-panel ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.observation-panel li {
+  margin: 8px 0;
+  color: #555;
+}
+
+/* Educational Panel */
+.educational-panel {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.educational-panel h3 {
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 30px;
+  color: #2d3748;
+}
+
+.education-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.edu-card {
+  padding: 25px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.edu-card h4 {
+  font-size: 1.3em;
+  margin-bottom: 15px;
+  color: #667eea;
+}
+
+.edu-card p {
+  color: #555;
+  line-height: 1.7;
+  margin: 10px 0;
+}
+
+.edu-card code {
+  display: block;
+  padding: 10px;
+  background: #2d3748;
+  color: #4caf50;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 15px 0;
+}
+
+.edu-card ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.edu-card li {
+  margin: 8px 0;
+  color: #555;
+}
+
+/* AI Card */
+.edu-card.ai-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-left: 4px solid #ffd700;
+}
+
+.edu-card.ai-card h4 {
+  color: #ffd700;
+}
+
+.edu-card.ai-card p,
+.edu-card.ai-card li {
+  color: white;
+}
+
+.edu-card.ai-card .highlight {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+/* Stats Panel */
+.stats-panel {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.stats-panel h4 {
+  margin-bottom: 15px;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+}
+
+.stat-label {
+  font-size: 0.85em;
+  opacity: 0.9;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.aliasing-explanation {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff8e1;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Download Section */
+.download-section {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.download-section h4 {
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.download-btn {
+  width: 100%;
+  padding: 15px;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.download-btn:hover:not(:disabled) {
+  background: #f0f0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.download-btn:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.download-info {
+  margin-top: 10px;
+  font-size: 0.9em;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+.download-info small {
+  display: block;
+}
+
+.ai-training-note {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff8e1;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  color: #333;
+}
+
+.ai-training-note strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #f57c00;
+}
+
+.ai-training-note p {
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .demo-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .back-button {
+    position: static;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .demo-header {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .demo-header h1 {
+    font-size: 2em;
+  }
+  
+  .control-section, .visualizer-section, .educational-panel {
+    padding: 20px;
+  }
+  
+  .education-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .playback-controls {
+    flex-direction: column;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .download-section {
+    padding: 15px;
+  }
+  
+  .download-btn {
+    font-size: 0.9em;
+    padding: 12px;
+  }
+}
