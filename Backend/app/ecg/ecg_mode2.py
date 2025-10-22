@@ -15,8 +15,7 @@ router = APIRouter()
 BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\ptb-diagnostic-ecg-database-1.0.0"
 
 class Mode2Processor:
-    """معالج محسن لـ Mode 2 مع خوارزميات متقدمة"""
-    
+        
     def __init__(self):
         self.sampling_rate = 1000
         
@@ -253,7 +252,6 @@ class Mode2Processor:
             return []
     
     def detect_abnormal_beats_aggressive(self, beats: List[Dict], threshold: float = 0.02):
-        """خوارزمية عدوانية لاكتشاف النبضات الشاذة"""
         if len(beats) < 5:
             return []
         
@@ -294,7 +292,6 @@ class Mode2Processor:
             return []
 
     def analyze_st_t_segments_improved(self, beat: np.ndarray, template: np.ndarray):
-        """تحليل محسن للـ ST-T segments"""
         try:
             length = len(beat)
             if length < 400:
@@ -333,7 +330,6 @@ class Mode2Processor:
             return 0.0
     
     def extract_fiducial_points_improved(self, beat_signal: np.ndarray):
-        """استخراج محسن للنقاط الأساسية"""
         try:
             if len(beat_signal) < 400:
                 return {}
@@ -383,7 +379,6 @@ class Mode2Processor:
             return {}
     
     def normalize_beat_preserve_variability(self, beat_signal: np.ndarray):
-        """تطبيع يحافظ على التباين بين النبضات"""
         try:
             if len(beat_signal) == 0:
                 return np.array([])
@@ -410,7 +405,6 @@ def analyze_ecg_mode2_optimized(
     threshold: float = 0.025,        
     max_beats: int = 100             
 ):
-    """تحليل محسن باستخدام الخوارزمية الجديدة - كل الـ parameters مطلوبة"""
     try:
         print(f"🔍 Starting OPTIMIZED Mode 2 analysis for {patient}/{recording}")
         print(f"🎯 Channel: {channel}, Threshold: {threshold}")
@@ -419,6 +413,10 @@ def analyze_ecg_mode2_optimized(
         processor = Mode2Processor()
         ecg_signal = processor.load_signal(patient, recording, channel)
         
+        
+#Sampling Rate: 1000 Hz (1000 samples per second)
+# Average Beat Duration: ~1.5 seconds (including rest period)
+
         analysis_length = min(len(ecg_signal), max_beats * 1500)
         analysis_signal = ecg_signal[:analysis_length]
         
@@ -599,3 +597,15 @@ def get_available_channels(patient: str, recording: str):
         
     except Exception as e:
         return {"error": f"Error getting channels: {str(e)}"}
+    
+    
+    
+    
+    
+# // Correlation: How similar the beat shape is to template (1.0 = identical)
+
+# // Euclidean Distance: Overall signal difference
+
+# // Mean Absolute Difference: Average amplitude deviation
+
+# // ST-T Analysis: Focuses on critical repolarization segments

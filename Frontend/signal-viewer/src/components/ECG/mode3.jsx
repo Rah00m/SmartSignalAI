@@ -719,33 +719,6 @@ export default function CombinedMode() {
   // =========================================================================
   return (
     <div className="combined-container">
-      <div className="combined-header">
-        <button
-          className="combined-back-button"
-          onClick={() => navigate("/ecg")}
-        >
-          🏠 Back to Home
-        </button>
-        <h1 className="combined-title">
-          🌀📊 Combined Mode - Polar & Scatter Plots
-        </h1>
-      </div>
-
-      <div className="combined-patient-info">
-        <div className="combined-patient-item">
-          <div className="combined-patient-label">Patient</div>
-          <div className="combined-patient-value">
-            {selectedPatient || "Not selected"}
-          </div>
-        </div>
-        <div className="combined-patient-item">
-          <div className="combined-patient-label">Recording</div>
-          <div className="combined-patient-value">
-            {selectedRecording || "Not selected"}
-          </div>
-        </div>
-      </div>
-
       {(!selectedPatient || !selectedRecording) && (
         <div className="combined-warning">
           ⚠️ Please select patient and recording from Home page
