@@ -139,7 +139,7 @@
 //         <div className="home-error-banner">
 //           <span className="home-error-icon">❌</span>
 //           <span className="home-error-text">{error}</span>
-//           <button 
+//           <button
 //             className="home-error-close"
 //             onClick={() => setError("")}
 //           >
@@ -276,7 +276,7 @@
 //                 <p>View and analyze ECG signals in real-time with playback controls</p>
 //               </div>
 //             </div>
-            
+
 //             <div className="home-feature-card">
 //               <span className="home-feature-icon">🔍</span>
 //               <div className="home-feature-content">
@@ -284,7 +284,7 @@
 //                 <p>Detect and analyze abnormal heartbeats automatically</p>
 //               </div>
 //             </div>
-            
+
 //             <div className="home-feature-card">
 //               <span className="home-feature-icon">🛞</span>
 //               <div className="home-feature-content">
@@ -292,7 +292,7 @@
 //                 <p>Visualize ECG signals in polar coordinates for pattern analysis</p>
 //               </div>
 //             </div>
-            
+
 //             <div className="home-feature-card">
 //               <span className="home-feature-icon">📈</span>
 //               <div className="home-feature-content">
@@ -300,7 +300,7 @@
 //                 <p>Compare multiple ECG channels with scatter plot visualization</p>
 //               </div>
 //             </div>
-            
+
 //             <div className="home-feature-card">
 //               <span className="home-feature-icon">🧠</span>
 //               <div className="home-feature-content">
@@ -308,7 +308,7 @@
 //                 <p>Advanced AI-powered ECG analysis and disease prediction</p>
 //               </div>
 //             </div>
-            
+
 //             <div className="home-feature-card">
 //               <span className="home-feature-icon">🔄</span>
 //               <div className="home-feature-content">
@@ -369,6 +369,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useECG } from "./ecgContext";
+import { useNavigate } from "react-router-dom";
 import Mode1 from "./Mode1";
 import Mode2 from "./Mode2";
 import Mode3 from "./Mode3";
@@ -395,6 +396,7 @@ function ECGHome() {
 
   const [activeTab, setActiveTab] = useState("mode1");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch patients
   useEffect(() => {
@@ -473,7 +475,10 @@ function ECGHome() {
         <div className="no-selection-message">
           <div className="selection-icon">📊</div>
           <h3>Please Select Patient and Recording</h3>
-          <p>Choose a patient and recording from the controls above to start analysis</p>
+          <p>
+            Choose a patient and recording from the controls above to start
+            analysis
+          </p>
         </div>
       );
     }
@@ -499,9 +504,17 @@ function ECGHome() {
       {/* Header */}
       <div className="dashboard-header">
         <h1 className="dashboard-title">SmartSignalAI</h1>
-        <h2 className="dashboard-subtitle">Medical Signal Analysis Dashboard</h2>
+        <h2 className="dashboard-subtitle">
+          Medical Signal Analysis Dashboard
+        </h2>
       </div>
-
+      <button
+        className="back-button"
+        onClick={() => navigate("/")}
+        type="button"
+      >
+        🏠 Back to Home
+      </button>
       {/* Patient Selection Controls */}
       <div className="dashboard-controls-panel">
         <div className="controls-grid">
@@ -560,7 +573,7 @@ function ECGHome() {
             />
             <p className="hint-text">{length} samples</p>
           </div> */}
-{/* 
+          {/* 
           <div className="control-group">
             <label className="control-label">⏩ Offset</label>
             <input
@@ -603,33 +616,31 @@ function ECGHome() {
 
       {/* Dashboard Tabs */}
       <div className="dashboard-tabs">
-        <button 
+        <button
           className={`tab-button ${activeTab === "mode1" ? "active" : ""}`}
           onClick={() => setActiveTab("mode1")}
         >
           <span className="tab-icon">📊</span>
           <span className="tab-text">Real-time Monitor</span>
         </button>
-        
-        <button 
+
+        <button
           className={`tab-button ${activeTab === "mode2" ? "active" : ""}`}
           onClick={() => setActiveTab("mode2")}
         >
           <span className="tab-icon">🎯</span>
           <span className="tab-text">Abnormal Beats</span>
         </button>
-        
-        <button 
+
+        <button
           className={`tab-button ${activeTab === "mode3" ? "active" : ""}`}
           onClick={() => setActiveTab("mode3")}
         >
           <span className="tab-icon">🌀</span>
           <span className="tab-text">Polar Graph</span>
         </button>
-        
-        
 
-        <button 
+        <button
           className={`tab-button ${activeTab === "mode6" ? "active" : ""}`}
           onClick={() => setActiveTab("mode6")}
         >
@@ -640,9 +651,7 @@ function ECGHome() {
 
       {/* Mode Content Area */}
       <div className="dashboard-content">
-        <div className="mode-container">
-          {renderActiveMode()}
-        </div>
+        <div className="mode-container">{renderActiveMode()}</div>
       </div>
 
       {/* Status Bar */}
@@ -651,7 +660,8 @@ function ECGHome() {
           <div className="status-ready">
             <span className="status-icon">✅</span>
             <span className="status-text">
-              Ready: <strong>{selectedPatient}</strong> - <strong>{selectedRecording}</strong>
+              Ready: <strong>{selectedPatient}</strong> -{" "}
+              <strong>{selectedRecording}</strong>
             </span>
           </div>
         ) : (
