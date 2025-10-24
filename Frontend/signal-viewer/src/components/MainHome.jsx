@@ -1,6 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './MainHome.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./MainHome.css";
 
 const MainHome = () => {
   const navigate = useNavigate();
@@ -14,38 +14,38 @@ const MainHome = () => {
         </p>
         <div className="main-home-badges">
           <span className="main-badge">Task 1: Signal Analysis</span>
-          <span className="main-badge main-badge-new">Task 2: Aliasing Demo 🆕</span>
+          <span className="main-badge main-badge-new">
+            Task 2: Aliasing Demo 🆕
+          </span>
         </div>
       </header>
 
       <div className="main-home-grid">
         {/* Card 1: Medical Signals */}
-        <div 
+        <div
           className="main-home-card medical-card"
-          onClick={() => navigate('/medical')}
+          onClick={() => navigate("/medical")}
         >
-          <div className="card-icon">M</div>
+          <div className="card-icon">❤️</div>
           <h2 className="card-title">Medical Signals</h2>
           <p className="card-description">
             Advanced signal processing for medical diagnostics and monitoring
           </p>
           <ul className="card-features">
             <li>• ECG signal analysis</li>
+            <li>• EEG brain monitoring</li>
             <li>• Heart rate monitoring</li>
-            <li>• Abnormal beat detection</li>
             <li>• Multiple visualization modes</li>
           </ul>
-          <button className="card-button">
-            Explore Medical →
-          </button>
+          <button className="card-button">Explore Medical →</button>
         </div>
 
         {/* Card 2: Audio Signals */}
-        <div 
+        <div
           className="main-home-card audio-card"
-          onClick={() => navigate('/audio')}
+          onClick={() => navigate("/audio")}
         >
-          <div className="card-icon">A</div>
+          <div className="card-icon">🎵</div>
           <h2 className="card-title">Audio Signals</h2>
           <p className="card-description">
             Audio signal processing and frequency analysis
@@ -56,17 +56,15 @@ const MainHome = () => {
             <li>• Noise reduction</li>
             <li>• Real-time processing</li>
           </ul>
-          <button className="card-button">
-            Explore Audio →
-          </button>
+          <button className="card-button">Explore Audio →</button>
         </div>
 
         {/* Card 3: Radar Signals */}
-        <div 
+        <div
           className="main-home-card radar-card"
-          onClick={() => navigate('/radar')}
+          onClick={() => navigate("/radar")}
         >
-          <div className="card-icon">R</div>
+          <div className="card-icon">📡</div>
           <h2 className="card-title">Radar Signals</h2>
           <p className="card-description">
             Advanced radar signal processing and target detection
@@ -77,15 +75,13 @@ const MainHome = () => {
             <li>• Range-Doppler processing</li>
             <li>• Track visualization</li>
           </ul>
-          <button className="card-button">
-            Explore Radar →
-          </button>
+          <button className="card-button">Explore Radar →</button>
         </div>
 
         {/* Card 4: Aliasing Demo - TASK 2 (NEW) */}
-        <div 
+        <div
           className="main-home-card aliasing-card new-feature"
-          onClick={() => navigate('/aliasing-demo')}
+          onClick={() => navigate("/aliasing-demo")}
         >
           <div className="new-badge-corner">NEW!</div>
           <div className="card-icon">🎤</div>
@@ -112,11 +108,17 @@ const MainHome = () => {
           <div className="footer-grid">
             <div className="footer-item">
               <strong>Task 1: Signal Analysis</strong>
-              <p>Comprehensive signal processing for medical diagnostics (ECG), audio analysis, and radar signal detection.</p>
+              <p>
+                Comprehensive signal processing for medical diagnostics (ECG),
+                audio analysis, and radar signal detection.
+              </p>
             </div>
             <div className="footer-item">
               <strong>Task 2: Aliasing Demonstration</strong>
-              <p>Interactive exploration of aliasing effects on speech signals, demonstrating the Nyquist-Shannon sampling theorem.</p>
+              <p>
+                Interactive exploration of aliasing effects on speech signals,
+                demonstrating the Nyquist-Shannon sampling theorem.
+              </p>
             </div>
           </div>
         </div>
@@ -125,4 +127,4 @@ const MainHome = () => {
   );
 };
 
-export default MainHome;
+export default MainHome; // ✅ ADD THIS EXPORT

@@ -92,4 +92,3 @@ class CarSoundGenerator:
             import traceback
             print(traceback.format_exc())
             raise e
-

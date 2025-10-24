@@ -9,7 +9,8 @@ import Plot from "react-plotly.js";
 import { useNavigate } from "react-router-dom";
 import { useECG } from "./ecgContext";
 import "./mode1.css";
-
+// Patient Selection → Channel Selection → Data Processing → Visualization → AI Analysis
+// Raw ECG Data → Filtering → Downsampling → Normalization → Visualization
 // Reusable ECG Plot Component to reduce code repetition
 const ECGPlot = React.memo(
   ({
@@ -210,27 +211,77 @@ export default function Mode1() {
   );
 
   // Signal processing utilities
+  // Main pipeline: Raw data → Filter → Downsample → Normalize → Display format
+
   const lowPassFilter = useCallback((signal, originalFreq, targetFreq) => {
     if (targetFreq >= originalFreq) return signal;
 
-    const nyquistFreq = targetFreq / 2;
+    const nyquistFreq = targetFreq / 2; // max allowed frequency
     const cutoffFreq = nyquistFreq * 0.8;
     const rc = 1.0 / (cutoffFreq * 2 * Math.PI);
     const dt = 1.0 / originalFreq;
-    const alpha = dt / (rc + dt);
+    const alpha = dt / (rc + dt); // smoothing factor
 
     const filtered = new Array(signal.length);
     filtered[0] = signal[0];
 
     for (let i = 1; i < signal.length; i++) {
+      // y[n] = α * x[n] + (1-α) * y[n-1] >>first-order infinite impulse response (IIR) filter:
       filtered[i] = filtered[i - 1] + alpha * (signal[i] - filtered[i - 1]);
     }
 
     return filtered;
   }, []);
 
+  // const downsampleSignal = useCallback(
+
+  //   (signal, originalFreq, targetFreq, applyFilter = true) => {
+  //     if (targetFreq >= originalFreq) {
+  //       return {
+  //         downsampledSignal: signal,
+  //         downsampledIndices: signal.map((_, i) => i),
+  //         ratio: 1,
+  //       };
+  //     }
+
+  //     // calC how many samples to skip(TAKE EVERY ORIGINAL_FREQ / TARGET_FREQ SAMPLE)
+  //     const ratio = Math.floor(originalFreq / targetFreq);
+  //     // Apply low-pass filter before downsampling to prevent aliasing
+  //     const signalToDownsample = applyFilter
+  //       ? lowPassFilter(signal, originalFreq, targetFreq)
+  //       : signal;
+
+  //     const downsampledSignal = [];
+  //     const downsampledIndices = [];
+
+  //     for (let i = 0; i < signalToDownsample.length; i += ratio) {
+  //       if (i < signalToDownsample.length) {
+  //         downsampledSignal.push(signalToDownsample[i]);
+  //         downsampledIndices.push(i);
+  //       }
+  //     }
+
+  //     return {
+  //       downsampledSignal,
+  //       downsampledIndices,
+  //       ratio,
+  //     };
+  //   },
+  //   [lowPassFilter]
+  // );
+
+  // Downsampling WITHOUT anti-aliasing filter
+
+
+
   const downsampleSignal = useCallback(
-    (signal, originalFreq, targetFreq, applyFilter = true) => {
+    (
+      signal,
+      originalFreq,
+      targetFreq,
+      applyFilter = true,
+      useInterpolation = true
+    ) => {
       if (targetFreq >= originalFreq) {
         return {
           downsampledSignal: signal,
@@ -239,7 +290,7 @@ export default function Mode1() {
         };
       }
 
-      const ratio = Math.floor(originalFreq / targetFreq);
+      const ratio = originalFreq / targetFreq;
       const signalToDownsample = applyFilter
         ? lowPassFilter(signal, originalFreq, targetFreq)
         : signal;
@@ -247,22 +298,48 @@ export default function Mode1() {
       const downsampledSignal = [];
       const downsampledIndices = [];
 
-      for (let i = 0; i < signalToDownsample.length; i += ratio) {
-        if (i < signalToDownsample.length) {
-          downsampledSignal.push(signalToDownsample[i]);
-          downsampledIndices.push(i);
+      if (useInterpolation && ratio > 1) {
+        // Use interpolation for smoother downsampling
+        for (let i = 0; i < signalToDownsample.length - 1; i += ratio) {
+          const currentIndex = i;
+          const nextIndex = Math.min(i + ratio, signalToDownsample.length - 1);
+
+          // Linear interpolation between current and next sample
+          const fractionalIndex = i % 1;
+          if (fractionalIndex > 0) {
+            const currentVal = signalToDownsample[Math.floor(i)];
+            const nextVal = signalToDownsample[Math.ceil(i)];
+            const interpolatedValue =
+              currentVal + (nextVal - currentVal) * fractionalIndex;
+
+            downsampledSignal.push(interpolatedValue);
+            downsampledIndices.push(i);
+          } else {
+            // Exact sample
+            downsampledSignal.push(signalToDownsample[i]);
+            downsampledIndices.push(i);
+          }
+        }
+      } else {
+        // Original method (no interpolation)
+        for (let i = 0; i < signalToDownsample.length; i += ratio) {
+          if (i < signalToDownsample.length) {
+            downsampledSignal.push(signalToDownsample[i]);
+            downsampledIndices.push(i);
+          }
         }
       }
 
       return {
         downsampledSignal,
-        downsampledIndices,
+        downsampledIndices: downsampledIndices.map((idx) => Math.round(idx)),
         ratio,
       };
     },
     [lowPassFilter]
   );
 
+  
   const demonstrateAliasing = useCallback(
     (signal, originalFreq, targetFreq) => {
       return downsampleSignal(signal, originalFreq, targetFreq, false);
@@ -272,12 +349,16 @@ export default function Mode1() {
 
   const normalizeSignal = useCallback((signal) => {
     if (!signal?.length) return signal;
+    // Find signal range
     const min = Math.min(...signal);
     const max = Math.max(...signal);
     const range = max - min;
     if (range === 0) return signal.map(() => 0);
+    //  Convert to range [-1, 1]
     return signal.map((value) => ((value - min) / range) * 2 - 1);
   }, []);
+
+  // Automatically spaces ECG channels to prevent overlap
 
   const calculateOptimalSpacing = useCallback((signalsData, channels) => {
     if (!signalsData || !channels.length) return 4.0;
@@ -353,6 +434,7 @@ export default function Mode1() {
   }, [setOffset]);
 
   // Signal processing for display
+  // Raw ECG Data → Slice → Filter/Downsample → Format Time → Display Ready
   const processSignalForDisplay = useCallback(
     (xData, yData, currentOffset = 0) => {
       const originalFreq = originalSamplingFrequency;
@@ -380,9 +462,20 @@ export default function Mode1() {
       if (targetFreq < originalFreq) {
         let result;
 
-        if (showAliasingEffect) {
+        if (showAliasingEffect && targetFreq < 500) {
           console.log("🎯 ALIASING MODE: Downsampling WITHOUT filter");
           result = demonstrateAliasing(slicedYData, originalFreq, targetFreq);
+        } else if (showAliasingEffect && targetFreq >= 500) {
+          // Above 500Hz - just do normal downsampling without filter
+          console.log(
+            "🎯 MILD MODE: Downsampling without filter but above 500Hz"
+          );
+          result = downsampleSignal(
+            slicedYData,
+            originalFreq,
+            targetFreq,
+            false
+          );
         } else {
           console.log(
             "🎯 NORMAL MODE: Downsampling WITH filter:",

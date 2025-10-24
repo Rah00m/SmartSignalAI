@@ -1,39 +1,39 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../MainHome.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "../MainHome.css";
 
 const MedicalSignals = () => {
   const navigate = useNavigate();
 
   const medicalSignalTypes = [
     {
-      id: 'ecg',
-      title: 'ECG',
-      description: 'Signal viewer and analyser for ECG signals',
-      icon: '❤️',
+      id: "ecg",
+      title: "ECG",
+      description: "Signal viewer and analyser for ECG signals",
+      icon: "❤️",
       features: [
-        'Real-time ECG monitoring',
-        'User-friendly interface', 
-        'Data visualization',
-        'Advanced signal processing'
+        "Real-time ECG monitoring",
+        "User-friendly interface",
+        "Data visualization",
+        "Advanced signal processing",
       ],
-      route: '/medical/ecg',
-      gradient: 'linear-gradient(135deg, #ff6b6b, #ee5a24)'
+      route: "/medical/ecg",
+      gradient: "linear-gradient(135deg, #ff6b6b, #ee5a24)",
     },
     {
-      id: 'eeg',
-      title: 'EEG',
-      description: 'Signal viewer and analyser for EEG signals',
-      icon: '🧠',
+      id: "eeg",
+      title: "EEG",
+      description: "Signal viewer and analyser for EEG signals",
+      icon: "🧠",
       features: [
-        'Real-time EEG monitoring',
-        'User-friendly interface',
-        'Data visualization', 
-        'Brain activity analysis'
+        "Real-time EEG monitoring",
+        "User-friendly interface",
+        "Data visualization",
+        "Brain activity analysis",
       ],
-      route: '/medical/eeg',
-      gradient: 'linear-gradient(135deg, #a29bfe, #6c5ce7)'
-    }
+      route: "/medical/eeg", // Changed to match your EEGViewer route
+      gradient: "linear-gradient(135deg, #a29bfe, #6c5ce7)",
+    },
   ];
 
   return (
@@ -42,13 +42,11 @@ const MedicalSignals = () => {
         <div className="hero-content">
           <h1 className="hero-title">Medical Signals</h1>
           <p className="hero-description">
-            Comprehensive medical signal analysis tools for ECG and EEG monitoring.
-            Advanced algorithms for real-time processing and visualization.
+            Comprehensive medical signal analysis tools for ECG and EEG
+            monitoring. Advanced algorithms for real-time processing and
+            visualization.
           </p>
-          <button 
-            className="back-btn"
-            onClick={() => navigate('/')}
-          >
+          <button className="back-btn" onClick={() => navigate("/")}>
             ← Back to Home
           </button>
         </div>
@@ -69,7 +67,7 @@ const MedicalSignals = () => {
                 <h3 className="signal-title">{signal.title}</h3>
               </div>
               <p className="signal-description">{signal.description}</p>
-              
+
               <div className="key-features">
                 <h4>⚡ Key Features:</h4>
                 <ul className="features-list">
@@ -81,7 +79,7 @@ const MedicalSignals = () => {
                   ))}
                 </ul>
               </div>
-              
+
               <button className="explore-btn">
                 Explore <span className="arrow">→</span>
               </button>
