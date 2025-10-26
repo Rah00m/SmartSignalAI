@@ -130,9 +130,6 @@ This module is a comprehensive tool for medical signal interpretation.
 **ECG/EEG Abnormality Detection**
 <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/ee1e0fc7-3b3e-4ce7-b2e7-d650fa917133" />
 
-**Advanced Visualization Modes**
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/2510dea7-044d-4379-b486-0080332a7300" />
-
 
 ---
 
