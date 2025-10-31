@@ -1,0 +1,254 @@
+.file-upload-enhancer {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.upload-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.upload-header h2 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.upload-header p {
+  opacity: 0.9;
+  font-size: 1.1em;
+}
+
+/* File Upload Section */
+.upload-section {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 15px 40px;
+  background: white;
+  color: #667eea;
+  font-size: 1.2em;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.file-input-label:hover {
+  background: #f0f0ff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.file-info {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.file-info p {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+/* Enhance Section */
+.enhance-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.enhance-btn {
+  padding: 20px 60px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.3em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.enhance-btn:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.enhance-btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.progress-message {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 1.1em;
+}
+
+.progress-message.info {
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px solid rgba(76, 175, 80, 0.5);
+}
+
+.error-message {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  border-radius: 10px;
+  font-size: 1.1em;
+}
+
+.loading-spinner {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Playback Section */
+.playback-section {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 30px;
+}
+
+.playback-section h3 {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 30px;
+}
+
+.playback-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.audio-player {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.audio-player h4 {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+}
+
+.audio-info {
+  margin: 15px 0;
+  font-size: 1em;
+  opacity: 0.9;
+}
+
+.audio-info p {
+  margin: 5px 0;
+}
+
+.play-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 15px;
+}
+
+.play-btn.original {
+  background: #FF6B6B;
+  color: white;
+}
+
+.play-btn.original:hover:not(:disabled) {
+  background: #ee5a5a;
+  transform: translateY(-2px);
+}
+
+.play-btn.enhanced {
+  background: #4ECDC4;
+  color: white;
+}
+
+.play-btn.enhanced:hover:not(:disabled) {
+  background: #45b8b0;
+  transform: translateY(-2px);
+}
+
+.play-btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.stop-btn {
+  display: block;
+  width: 200px;
+  margin: 0 auto;
+  padding: 12px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.stop-btn:hover {
+  background: #da190b;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .playback-controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .file-upload-enhancer {
+    padding: 20px;
+  }
+}

@@ -21,6 +21,7 @@ import RadarSignals from "./components/Radar/RadarSignals";
 
 // Task 2: Aliasing Demo (NEW)
 import AliasingDemo from './components/AliasingDemo/AliasingDemo';
+import FileUploadEnhancer from './components/AliasingDemo/FileUploadEnhancer';
 
 import "./App.css";
 
@@ -55,6 +56,7 @@ function App() {
             
             {/* Task 2: Aliasing Demo */}
             <Route path="/aliasing-demo" element={<AliasingDemo />} />
+            <Route path="/ai-enhancer" element={<FileUploadEnhancer />} />  {/* New route */}
             
             {/* Legacy routes */}
             <Route path="/ecg" element={<ECGHome onDataFetched={handleDataFetched} />} />

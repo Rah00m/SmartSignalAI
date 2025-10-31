@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FrequencySlider from './FrequencySlider';
-import AudioVisualizer from './AudioVisualizer';
 import AudioControls from './AudioControls';
+import FileUploadEnhancer from './FileUploadEnhancer';
 import './AliasingDemo.css';
 import { 
   loadAudio, 
@@ -22,7 +22,9 @@ const AliasingDemo = () => {
   const [currentAudioFile, setCurrentAudioFile] = useState('/assets/audio/female-voice.wav'); // ✅ Add .wav extension
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [aiEnhancedBuffer, setAiEnhancedBuffer] = useState(null);
   
+  const [customFileName, setCustomFileName] = useState(null); // ✅ ADD: New state for custom file
   const sourceNodeRef = useRef(null);
 
   // Initialize Audio Context
@@ -165,6 +167,57 @@ const AliasingDemo = () => {
     setCurrentAudioFile(newFile);
   };
 
+  const handleAIEnhancedPlay = (enhancedBuffer) => {
+    if (!audioContext) return;
+
+    handleStop(); // Stop any current playback
+
+    const source = audioContext.createBufferSource();
+    source.buffer = enhancedBuffer;
+    source.connect(audioContext.destination);
+    
+    source.onended = () => {
+      setIsPlaying(false);
+      sourceNodeRef.current = null;
+    };
+
+    source.start(0);
+    sourceNodeRef.current = source;
+    setIsPlaying(true);
+    setAiEnhancedBuffer(enhancedBuffer);
+
+    console.log('🎵 Playing AI-enhanced audio!');
+  };
+
+  // ✅ ADD: Handler for custom file upload
+  const handleCustomFileUpload = async (file) => {
+    if (!audioContext) {
+      setError('Audio context not initialized');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    handleStop(); // Stop current playback
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      
+      setOriginalBuffer(audioBuffer);
+      setProcessedBuffer(audioBuffer);
+      setCurrentAudioFile(`custom:${file.name}`); // Mark as custom file
+      setCustomFileName(file.name);
+      
+      console.log('✅ Custom file loaded:', file.name);
+    } catch (err) {
+      console.error('Error loading custom file:', err);
+      setError('Failed to load audio file. Please ensure it is a valid audio format.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="aliasing-demo">
       <button className="back-button" onClick={() => navigate('/')}>
@@ -172,24 +225,11 @@ const AliasingDemo = () => {
       </button>
 
       <div className="demo-header">
-        <h1>🎤 Part 1: Demonstrating Aliasing on Speech Signals</h1>
+        <h1>🎵 AI Anti-Aliasing Demo</h1>
         <p className="demo-description">
-          Explore how under-sampling below the Nyquist rate affects audio quality. 
-          Reduce sampling frequency and hear how higher frequencies 'fold back' and appear at lower frequencies, causing female voices to sound like male voices.
+          Experience audio aliasing effects and AI-powered enhancement
         </p>
       </div>
-
-      {error && (
-        <div className="error-message">
-          ⚠️ {error}
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="loading-message">
-          ⏳ Loading audio file...
-        </div>
-      )}
 
       <div className="demo-content">
         <div className="control-section">
@@ -205,16 +245,33 @@ const AliasingDemo = () => {
             onStop={handleStop}
             audioFile={currentAudioFile}
             onAudioFileChange={handleAudioFileChange}
-            processedBuffer={processedBuffer}  // ✅ NEW: Pass processed buffer
-            samplingRate={samplingFrequency}   // ✅ NEW: Pass sampling rate
+            processedBuffer={processedBuffer}
+            samplingRate={samplingFrequency}
+            onAIEnhancedPlay={handleAIEnhancedPlay}
+            onCustomFileUpload={handleCustomFileUpload} // ✅ ADD THIS
           />
         </div>
 
-        <div className="visualizer-section">
+        {/* ✅ REMOVE visualizer-section - we'll delete AudioVisualizer in Step 3 */}
+        {/* <div className="visualizer-section">
           <AudioVisualizer 
             audioBuffer={processedBuffer}
             samplingRate={samplingFrequency}
             isPlaying={isPlaying}
+          />
+        </div> */}
+
+        {/* ✅ NEW: AI Enhancement Section - Move FileUploadEnhancer here */}
+        <div className="ai-enhancement-section">
+          <h3>🧠 AI Anti-Aliasing Enhancement</h3>
+          <p className="section-description">
+            Choose how to enhance your audio: use the current aliased output or upload your own file
+          </p>
+          
+          <FileUploadEnhancer 
+            processedBuffer={processedBuffer}
+            samplingRate={samplingFrequency}
+            onAIEnhancedPlay={handleAIEnhancedPlay}
           />
         </div>
       </div>

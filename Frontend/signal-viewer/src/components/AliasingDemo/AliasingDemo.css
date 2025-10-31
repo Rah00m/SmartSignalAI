@@ -468,6 +468,35 @@
   line-height: 1.6;
 }
 
+/* AI Enhancement Section */
+.ai-enhancement-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.ai-enhancement-section h3 {
+  color: white;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai-enhancement-section .section-description {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Remove visualizer section styles if they exist */
+.visualizer-section {
+  display: none; /* We'll remove this completely in Step 3 */
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .demo-content {

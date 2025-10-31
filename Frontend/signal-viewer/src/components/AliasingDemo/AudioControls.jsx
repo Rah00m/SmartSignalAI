@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import './AliasingDemo.css';
+import aiAntiAliasingService from '../../services/aiAntiAliasingService';
 
 const AudioControls = ({ 
   isPlaying, 
@@ -8,10 +10,17 @@ const AudioControls = ({
   audioFile, 
   onAudioFileChange,
   processedBuffer,  // NEW: Add processed buffer prop
-  samplingRate      // NEW: Add sampling rate prop
+  samplingRate,      // NEW: Add sampling rate prop
+  onAIEnhancedPlay,
+  onCustomFileUpload // ✅ NEW PROP
 }) => {
   const [selectedFile, setSelectedFile] = useState('female');
+  const [isAIProcessing, setIsAIProcessing] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const [aiProgress, setAiProgress] = useState('');
+  const fileInputRef = useRef(null);
 
+  // paths for the audio files
   const audioFiles = [
     { 
       id: 'female', 
@@ -24,13 +33,14 @@ const AudioControls = ({
       label: '👨 Male Voice', 
       file: '/assets/audio/male-voice.wav',
       description: 'Lower-pitched voice - less affected by aliasing'
-    },
-    { 
-      id: 'mixed', 
-      label: '👥 Mixed Voices', 
-      file: '/assets/audio/mixed-voices.wav',
-      description: 'Both genders - compare the effects'
     }
+    // ,
+    // { 
+    //   id: 'mixed', 
+    //   label: '👥 Mixed Voices', 
+    //   file: '/assets/audio/mixed-voices.wav',
+    //   description: 'Both genders - compare the effects'
+    // }
   ];
 
   const handleFileChange = (fileId) => {
@@ -38,6 +48,17 @@ const AudioControls = ({
     const file = audioFiles.find(f => f.id === fileId);
     if (onAudioFileChange) {
       onAudioFileChange(file.file);
+    }
+  };
+
+  const handleCustomFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChangeUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (file && onCustomFileUpload) {
+      onCustomFileUpload(file);
     }
   };
 
@@ -135,8 +156,45 @@ const AudioControls = ({
 
   const selectedFileInfo = audioFiles.find(f => f.id === selectedFile);
 
+  const handleAIEnhancedPlay = async () => {
+    if (!processedBuffer) {
+      setAiError('No audio available. Please play audio first.');
+      return;
+    }
+
+    if (samplingRate >= 44100) {
+      setAiError('AI enhancement only works for aliased audio (sampling rate < 44.1kHz)');
+      return;
+    }
+
+    setIsAIProcessing(true);
+    setAiError(null);
+    setAiProgress('Initializing AI model...');
+
+    try {
+      const enhancedBuffer = await aiAntiAliasingService.processAudio(
+        processedBuffer, 
+        48000,
+        (progress) => setAiProgress(progress)
+      );
+      
+      if (onAIEnhancedPlay) {
+        onAIEnhancedPlay(enhancedBuffer);
+      }
+      setAiProgress('Enhancement complete!');
+      setTimeout(() => setAiProgress(''), 2000);
+    } catch (error) {
+      setAiError(error.message || 'AI enhancement failed');
+    } finally {
+      setIsAIProcessing(false);
+    }
+  };
+
   return (
     <div className="audio-controls">
+
+
+      {/* the div resp to getting the files from the device */}
       <div className="file-selector">
         <h4>🎵 Select Audio Sample:</h4>
         <div className="file-buttons">
@@ -175,15 +233,8 @@ const AudioControls = ({
         >
           ⏸️ Pause
         </button>
-        {onStop && (
-          <button 
-            onClick={onStop}
-            className="control-btn stop-btn"
-            title="Stop playback"
-          >
-            ⏹️ Stop
-          </button>
-        )}
+
+        {}
       </div>
 
       {/* NEW: Download Section */}
@@ -228,6 +279,52 @@ const AudioControls = ({
           <strong>🧠 For Part 3 (AI Training):</strong>
           <p>Download aliased versions at different sample rates (8kHz, 12kHz, 16kHz) along with the original 44.1kHz version. These pairs will be used to train your anti-aliasing neural network.</p>
         </div>
+      </div>
+
+      {/* AI Enhancement Section */}
+      <div className="ai-enhancement-section">
+        <h4>🧠 AI Anti-Aliasing (AudioSR)</h4>
+        
+        <button
+          onClick={handleAIEnhancedPlay}
+          disabled={isAIProcessing || samplingRate >= 44100 || !processedBuffer}
+          className="ai-enhance-btn"
+        >
+          {isAIProcessing ? `⏳ ${aiProgress}` : '🤖 Enhance with AI'}
+        </button>
+
+        {aiError && <div className="ai-error">⚠️ {aiError}</div>}
+        
+        {samplingRate >= 44100 && (
+          <p className="ai-info">
+            <small></small>
+          </p>
+        )}
+
+        {isAIProcessing && (
+          <div className="ai-loading">
+            <div className="spinner"></div>
+            <p>{aiProgress}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Custom File Upload Section */}
+      <div className="custom-file-upload">
+        <h4>📤 Upload Custom Audio File:</h4>
+        <button
+          onClick={handleCustomFileClick}
+          className="upload-btn"
+        >
+          📁 Upload File
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*"
+          style={{ display: 'none' }}
+          onChange={handleFileChangeUpload}
+        />
       </div>
     </div>
   );
