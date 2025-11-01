@@ -1140,9 +1140,7 @@ export default function Mode1() {
   // Render functions
   const renderHeader = () => (
     <div className="mode1-header">
-      <button className="mode1-back-button" onClick={() => navigate("/ecg")}>
-        ← Back to Dashboard
-      </button>
+
       <div className="mode1-header-content">
         <div className="mode1-header-main">
           <h1 className="mode1-title">12-Lead ECG Monitor</h1>

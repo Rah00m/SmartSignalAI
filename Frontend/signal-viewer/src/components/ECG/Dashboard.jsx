@@ -38,7 +38,10 @@ export default function Dashboard() {
   const [mode3CycleLength, setMode3CycleLength] = useState(200);
 
   // Mode 4 States
-  const [mode4Channels, setMode4Channels] = useState({ channel1: "i", channel2: "ii" });
+  const [mode4Channels, setMode4Channels] = useState({
+    channel1: "i",
+    channel2: "ii",
+  });
   const [mode4Signals, setMode4Signals] = useState(null);
   const [mode4ChunkSize, setMode4ChunkSize] = useState(500);
 
@@ -171,8 +174,8 @@ export default function Dashboard() {
       const requestData = {
         patient_info: {
           id: selectedPatient,
-          recording: selectedRecording
-        }
+          recording: selectedRecording,
+        },
       };
 
       const response = await fetch(apiUrl, {
@@ -180,11 +183,11 @@ export default function Dashboard() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       const result = await response.json();
-      
+
       if (response.ok && result.success) {
         setMode5Analysis(result);
       } else {
@@ -225,10 +228,10 @@ export default function Dashboard() {
   const fetchMode6Alternative = async () => {
     try {
       const apiUrl = `http://127.0.0.1:8000/ecg/mode2/analyze-optimized?patient=${selectedPatient}&recording=${selectedRecording}&channel=${mode6Channel}&threshold=0.05&max_beats=50`;
-      
+
       const response = await fetch(apiUrl);
       const jsonData = await response.json();
-      
+
       if (jsonData.beat_data || jsonData.abnormal_beats) {
         setMode6Data(jsonData);
       }
@@ -261,7 +264,17 @@ export default function Dashboard() {
         fetchMode6Data();
         break;
     }
-  }, [activeTab, selectedPatient, selectedRecording, mode1Channel, mode2Channel, mode2Threshold, mode3Channels, mode4Channels, mode6Channel]);
+  }, [
+    activeTab,
+    selectedPatient,
+    selectedRecording,
+    mode1Channel,
+    mode2Channel,
+    mode2Threshold,
+    mode3Channels,
+    mode4Channels,
+    mode6Channel,
+  ]);
 
   // Render Mode 1 Content (Time Series)
   const renderTimeSeries = () => {
@@ -269,17 +282,22 @@ export default function Dashboard() {
       return <div className="no-data">No time series data loaded</div>;
     }
 
-    const currentData = isPlaying ? ecgData : {
-      x: mode1FullSignal.x.slice(offset, offset + length),
-      y: mode1FullSignal.y.slice(offset, offset + length)
-    };
+    const currentData = isPlaying
+      ? ecgData
+      : {
+          x: mode1FullSignal.x.slice(offset, offset + length),
+          y: mode1FullSignal.y.slice(offset, offset + length),
+        };
 
     return (
       <div className="mode-content">
         <div className="mode-controls">
           <div className="control-group">
             <label>Channel:</label>
-            <select value={mode1Channel} onChange={(e) => setMode1Channel(e.target.value)}>
+            <select
+              value={mode1Channel}
+              onChange={(e) => setMode1Channel(e.target.value)}
+            >
               <option value="I">I</option>
               <option value="II">II</option>
               <option value="III">III</option>
@@ -296,14 +314,20 @@ export default function Dashboard() {
           </div>
 
           <div className="control-group">
-            <button onClick={() => setIsPlaying(!isPlaying)} className="play-button">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="play-button"
+            >
               {isPlaying ? "⏸️ Stop" : "▶️ Play"}
             </button>
           </div>
 
           <div className="control-group">
             <label>Speed:</label>
-            <select value={playbackSpeed} onChange={(e) => setPlaybackSpeed(Number(e.target.value))}>
+            <select
+              value={playbackSpeed}
+              onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
+            >
               <option value={2000}>Slow</option>
               <option value={1000}>Normal</option>
               <option value={500}>Fast</option>
@@ -312,21 +336,27 @@ export default function Dashboard() {
         </div>
 
         <Plot
-          data={[{
-            x: currentData.x,
-            y: currentData.y,
-            type: "scatter",
-            mode: "lines",
-            line: { color: "#00ff88", width: 2 }
-          }]}
+          data={[
+            {
+              x: currentData.x,
+              y: currentData.y,
+              type: "scatter",
+              mode: "lines",
+              line: { color: "#00ff88", width: 2 },
+            },
+          ]}
           layout={{
             title: `ECG Monitor - Channel ${mode1Channel}`,
             height: 400,
             paper_bgcolor: "#1f2937",
             plot_bgcolor: "#111827",
             font: { color: "white" },
-            xaxis: { title: "Time (samples)", color: "white", gridcolor: "#666" },
-            yaxis: { title: "Voltage (mV)", color: "white", gridcolor: "#666" }
+            xaxis: {
+              title: "Time (samples)",
+              color: "white",
+              gridcolor: "#666",
+            },
+            yaxis: { title: "Voltage (mV)", color: "white", gridcolor: "#666" },
           }}
           config={{ displayModeBar: true, responsive: true }}
         />
@@ -345,7 +375,10 @@ export default function Dashboard() {
         <div className="mode-controls">
           <div className="control-group">
             <label>Channel:</label>
-            <select value={mode2Channel} onChange={(e) => setMode2Channel(e.target.value)}>
+            <select
+              value={mode2Channel}
+              onChange={(e) => setMode2Channel(e.target.value)}
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -382,31 +415,42 @@ export default function Dashboard() {
           <div className="stats-grid">
             <div className="stat-card">
               <h4>Total Beats</h4>
-              <div className="stat-value">{mode2Analysis.analysis_summary?.total_beats_analyzed || 0}</div>
+              <div className="stat-value">
+                {mode2Analysis.analysis_summary?.total_beats_analyzed || 0}
+              </div>
             </div>
             <div className="stat-card">
               <h4>Abnormal Beats</h4>
-              <div className="stat-value abnormal">{mode2Analysis.analysis_summary?.abnormal_beats_detected || 0}</div>
+              <div className="stat-value abnormal">
+                {mode2Analysis.analysis_summary?.abnormal_beats_detected || 0}
+              </div>
             </div>
             <div className="stat-card">
               <h4>Abnormality %</h4>
-              <div className="stat-value">{mode2Analysis.analysis_summary?.abnormality_percentage || 0}%</div>
+              <div className="stat-value">
+                {mode2Analysis.analysis_summary?.abnormality_percentage || 0}%
+              </div>
             </div>
           </div>
 
-          {mode2Analysis.abnormal_beats && mode2Analysis.abnormal_beats.length > 0 && (
-            <div className="abnormal-list">
-              <h4>Detected Abnormal Beats</h4>
-              <div className="beats-container">
-                {mode2Analysis.abnormal_beats.slice(0, 5).map((beat, index) => (
-                  <div key={beat.beat_index} className="beat-item">
-                    <span>Beat #{beat.beat_index}</span>
-                    <span>Diff: {(beat.difference_score || 0).toFixed(3)}</span>
-                  </div>
-                ))}
+          {mode2Analysis.abnormal_beats &&
+            mode2Analysis.abnormal_beats.length > 0 && (
+              <div className="abnormal-list">
+                <h4>Detected Abnormal Beats</h4>
+                <div className="beats-container">
+                  {mode2Analysis.abnormal_beats
+                    .slice(0, 5)
+                    .map((beat, index) => (
+                      <div key={beat.beat_index} className="beat-item">
+                        <span>Beat #{beat.beat_index}</span>
+                        <span>
+                          Diff: {(beat.difference_score || 0).toFixed(3)}
+                        </span>
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     );
@@ -418,40 +462,51 @@ export default function Dashboard() {
       return <div className="no-data">No polar graph data loaded</div>;
     }
 
-    const polarData = mode3Channels.map((channel, index) => {
-      const signal = mode3Signals.signals[channel] || [];
-      const segment = signal.slice(0, mode3CycleLength);
-      
-      if (segment.length === 0) return null;
+    const polarData = mode3Channels
+      .map((channel, index) => {
+        const signal = mode3Signals.signals[channel] || [];
+        const segment = signal.slice(0, mode3CycleLength);
 
-      const minVal = Math.min(...segment);
-      const maxVal = Math.max(...segment);
-      const range = maxVal - minVal;
+        if (segment.length === 0) return null;
 
-      const polarPoints = segment.map((value, i) => {
-        const normalized = range === 0 ? 0.5 : (value - minVal) / range;
-        const angle = (i / segment.length) * 360;
-        return { r: normalized, theta: angle };
-      });
+        const minVal = Math.min(...segment);
+        const maxVal = Math.max(...segment);
+        const range = maxVal - minVal;
 
-      const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1"];
-      
-      return {
-        r: polarPoints.map(p => p.r),
-        theta: polarPoints.map(p => p.theta),
-        mode: "lines",
-        type: "scatterpolar",
-        name: `Channel ${channel.toUpperCase()}`,
-        line: { color: colors[index % colors.length], width: 2 }
-      };
-    }).filter(Boolean);
+        const polarPoints = segment.map((value, i) => {
+          const normalized = range === 0 ? 0.5 : (value - minVal) / range;
+          const angle = (i / segment.length) * 360;
+          return { r: normalized, theta: angle };
+        });
+
+        const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1"];
+
+        return {
+          r: polarPoints.map((p) => p.r),
+          theta: polarPoints.map((p) => p.theta),
+          mode: "lines",
+          type: "scatterpolar",
+          name: `Channel ${channel.toUpperCase()}`,
+          line: { color: colors[index % colors.length], width: 2 },
+        };
+      })
+      .filter(Boolean);
 
     return (
       <div className="mode-content">
         <div className="mode-controls">
           <div className="control-group">
             <label>Channel 1:</label>
-            <select value={mode3Channels[0]} onChange={(e) => setMode3Channels([e.target.value, mode3Channels[1], mode3Channels[2]])}>
+            <select
+              value={mode3Channels[0]}
+              onChange={(e) =>
+                setMode3Channels([
+                  e.target.value,
+                  mode3Channels[1],
+                  mode3Channels[2],
+                ])
+              }
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -469,7 +524,16 @@ export default function Dashboard() {
 
           <div className="control-group">
             <label>Channel 2:</label>
-            <select value={mode3Channels[1]} onChange={(e) => setMode3Channels([mode3Channels[0], e.target.value, mode3Channels[2]])}>
+            <select
+              value={mode3Channels[1]}
+              onChange={(e) =>
+                setMode3Channels([
+                  mode3Channels[0],
+                  e.target.value,
+                  mode3Channels[2],
+                ])
+              }
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -487,7 +551,16 @@ export default function Dashboard() {
 
           <div className="control-group">
             <label>Channel 3:</label>
-            <select value={mode3Channels[2]} onChange={(e) => setMode3Channels([mode3Channels[0], mode3Channels[1], e.target.value])}>
+            <select
+              value={mode3Channels[2]}
+              onChange={(e) =>
+                setMode3Channels([
+                  mode3Channels[0],
+                  mode3Channels[1],
+                  e.target.value,
+                ])
+              }
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -522,12 +595,12 @@ export default function Dashboard() {
               title: "Polar Graph",
               polar: {
                 radialaxis: { visible: true, range: [0, 1] },
-                bgcolor: "#1f2937"
+                bgcolor: "#1f2937",
               },
               paper_bgcolor: "#1f2937",
               font: { color: "white" },
               height: 500,
-              showlegend: true
+              showlegend: true,
             }}
             config={{ displayModeBar: true, responsive: true }}
           />
@@ -548,12 +621,14 @@ export default function Dashboard() {
     const signal2 = mode4Signals.signals[mode4Channels.channel2] || [];
 
     if (signal1.length === 0 || signal2.length === 0) {
-      return <div className="no-data">Insufficient data for selected channels</div>;
+      return (
+        <div className="no-data">Insufficient data for selected channels</div>
+      );
     }
 
     const scatterData = signal1.slice(0, mode4ChunkSize).map((_, index) => ({
       x: signal2[index] || 0,
-      y: signal1[index] || 0
+      y: signal1[index] || 0,
     }));
 
     return (
@@ -561,7 +636,12 @@ export default function Dashboard() {
         <div className="mode-controls">
           <div className="control-group">
             <label>Channel 1 (Y):</label>
-            <select value={mode4Channels.channel1} onChange={(e) => setMode4Channels({...mode4Channels, channel1: e.target.value})}>
+            <select
+              value={mode4Channels.channel1}
+              onChange={(e) =>
+                setMode4Channels({ ...mode4Channels, channel1: e.target.value })
+              }
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -579,7 +659,12 @@ export default function Dashboard() {
 
           <div className="control-group">
             <label>Channel 2 (X):</label>
-            <select value={mode4Channels.channel2} onChange={(e) => setMode4Channels({...mode4Channels, channel2: e.target.value})}>
+            <select
+              value={mode4Channels.channel2}
+              onChange={(e) =>
+                setMode4Channels({ ...mode4Channels, channel2: e.target.value })
+              }
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -597,7 +682,10 @@ export default function Dashboard() {
 
           <div className="control-group">
             <label>Chunk Size: {mode4ChunkSize}</label>
-            <select value={mode4ChunkSize} onChange={(e) => setMode4ChunkSize(Number(e.target.value))}>
+            <select
+              value={mode4ChunkSize}
+              onChange={(e) => setMode4ChunkSize(Number(e.target.value))}
+            >
               <option value={100}>100 samples</option>
               <option value={500}>500 samples</option>
               <option value={1000}>1000 samples</option>
@@ -606,25 +694,35 @@ export default function Dashboard() {
         </div>
 
         <Plot
-          data={[{
-            x: scatterData.map(d => d.x),
-            y: scatterData.map(d => d.y),
-            type: "scatter",
-            mode: "markers",
-            marker: {
-              size: 4,
-              color: "#FF6B6B",
-              opacity: 0.6
-            }
-          }]}
+          data={[
+            {
+              x: scatterData.map((d) => d.x),
+              y: scatterData.map((d) => d.y),
+              type: "scatter",
+              mode: "markers",
+              marker: {
+                size: 4,
+                color: "#FF6B6B",
+                opacity: 0.6,
+              },
+            },
+          ]}
           layout={{
             title: `Scatter Plot: ${mode4Channels.channel1.toUpperCase()} vs ${mode4Channels.channel2.toUpperCase()}`,
             height: 500,
             paper_bgcolor: "#1f2937",
             plot_bgcolor: "#111827",
             font: { color: "white" },
-            xaxis: { title: `Channel ${mode4Channels.channel2.toUpperCase()}`, color: "white", gridcolor: "#666" },
-            yaxis: { title: `Channel ${mode4Channels.channel1.toUpperCase()}`, color: "white", gridcolor: "#666" }
+            xaxis: {
+              title: `Channel ${mode4Channels.channel2.toUpperCase()}`,
+              color: "white",
+              gridcolor: "#666",
+            },
+            yaxis: {
+              title: `Channel ${mode4Channels.channel1.toUpperCase()}`,
+              color: "white",
+              gridcolor: "#666",
+            },
           }}
           config={{ displayModeBar: true, responsive: true }}
         />
@@ -637,12 +735,14 @@ export default function Dashboard() {
     return (
       <div className="mode-content">
         <div className="mode-controls">
-          <button 
-            onClick={fetchMode5Data} 
+          <button
+            onClick={fetchMode5Data}
             disabled={mode5Loading}
             className="ai-button"
           >
-            {mode5Loading ? "🧠 Analyzing..." : "🤖 Run AI Comprehensive Analysis"}
+            {mode5Loading
+              ? "🧠 Analyzing..."
+              : "🤖 Run AI Comprehensive Analysis"}
           </button>
         </div>
 
@@ -651,21 +751,27 @@ export default function Dashboard() {
             <div className="diagnosis-card">
               <h3>AI Diagnosis Results</h3>
               <div className="diagnosis-main">
-                {mode5Analysis.final_diagnosis?.diagnosis_description || "No diagnosis available"}
+                {mode5Analysis.final_diagnosis?.diagnosis_description ||
+                  "No diagnosis available"}
               </div>
               <div className="confidence">
                 Confidence: {mode5Analysis.final_diagnosis?.confidence || 0}%
               </div>
-              
+
               {mode5Analysis.channel_analysis && (
                 <div className="channel-analysis">
                   <h4>Channel-wise Analysis</h4>
-                  {Object.entries(mode5Analysis.channel_analysis).map(([channel, analysis]) => (
-                    <div key={channel} className="channel-result">
-                      <strong>{channel.toUpperCase()}:</strong> {analysis.main_diagnosis?.diagnosis_description}
-                      <span className="risk-level">({analysis.risk_level})</span>
-                    </div>
-                  ))}
+                  {Object.entries(mode5Analysis.channel_analysis).map(
+                    ([channel, analysis]) => (
+                      <div key={channel} className="channel-result">
+                        <strong>{channel.toUpperCase()}:</strong>{" "}
+                        {analysis.main_diagnosis?.diagnosis_description}
+                        <span className="risk-level">
+                          ({analysis.risk_level})
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
               )}
             </div>
@@ -686,7 +792,10 @@ export default function Dashboard() {
         <div className="mode-controls">
           <div className="control-group">
             <label>Channel:</label>
-            <select value={mode6Channel} onChange={(e) => setMode6Channel(e.target.value)}>
+            <select
+              value={mode6Channel}
+              onChange={(e) => setMode6Channel(e.target.value)}
+            >
               <option value="i">I</option>
               <option value="ii">II</option>
               <option value="iii">III</option>
@@ -724,7 +833,10 @@ export default function Dashboard() {
             <h4>XOR Graph Data Loaded</h4>
             <p>Channel: {mode6Channel.toUpperCase()}</p>
             <p>Time Chunk: {mode6TimeChunk} seconds</p>
-            <p>XOR analysis compares sequential time chunks to highlight signal differences.</p>
+            <p>
+              XOR analysis compares sequential time chunks to highlight signal
+              differences.
+            </p>
           </div>
         ) : (
           <div className="no-data">No XOR data loaded</div>
@@ -737,16 +849,21 @@ export default function Dashboard() {
     <div className="dashboard-container">
       {/* Header */}
       <div className="dashboard-header">
+        <h1>ECG Analysis Dashboard</h1>
+        <div className="patient-info">
+          <span>
+            Patient: <strong>{selectedPatient || "Not selected"}</strong>
+          </span>
+          <span>
+            Recording: <strong>{selectedRecording || "Not selected"}</strong>
+          </span>
+        </div>
+      </div>
+      <div className="back-button-container">
         <button className="back-button" onClick={() => navigate("/")}>
           🏠 Back to Home
         </button>
-        <h1>ECG Analysis Dashboard</h1>
-        <div className="patient-info">
-          <span>Patient: <strong>{selectedPatient || "Not selected"}</strong></span>
-          <span>Recording: <strong>{selectedRecording || "Not selected"}</strong></span>
-        </div>
       </div>
-
       {/* Global Controls */}
       <div className="global-controls">
         <div className="control-group">
@@ -771,6 +888,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Error banner */}
       {error && (
         <div className="error-banner">
           <span>{error}</span>
@@ -778,6 +896,7 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Conditional rendering if patient/recording not selected */}
       {!selectedPatient || !selectedRecording ? (
         <div className="no-selection">
           <p>Please select a patient and recording from the home page</p>
@@ -786,42 +905,27 @@ export default function Dashboard() {
         <div className="dashboard-main">
           {/* Navigation Tabs */}
           <div className="dashboard-tabs">
-            <button 
-              className={`tab-button ${activeTab === "timeSeries" ? "active" : ""}`}
-              onClick={() => setActiveTab("timeSeries")}
-            >
-              📊 Time Series
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "abnormalBeats" ? "active" : ""}`}
-              onClick={() => setActiveTab("abnormalBeats")}
-            >
-              🎯 Abnormal Beats
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "polarGraph" ? "active" : ""}`}
-              onClick={() => setActiveTab("polarGraph")}
-            >
-              🌀 Polar Graph
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "recurrencePlot" ? "active" : ""}`}
-              onClick={() => setActiveTab("recurrencePlot")}
-            >
-              📈 Recurrence Plot
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "aiAnalysis" ? "active" : ""}`}
-              onClick={() => setActiveTab("aiAnalysis")}
-            >
-              🧠 AI Analysis
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "xorGraph" ? "active" : ""}`}
-              onClick={() => setActiveTab("xorGraph")}
-            >
-              🔄 XOR Graph
-            </button>
+            {[
+              "timeSeries",
+              "abnormalBeats",
+              "polarGraph",
+              "recurrencePlot",
+              "aiAnalysis",
+              "xorGraph",
+            ].map((tab) => (
+              <button
+                key={tab}
+                className={`tab-button ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab === "timeSeries" && "📊 Time Series"}
+                {tab === "abnormalBeats" && "🎯 Abnormal Beats"}
+                {tab === "polarGraph" && "🌀 Polar Graph"}
+                {tab === "recurrencePlot" && "📈 Recurrence Plot"}
+                {tab === "aiAnalysis" && "🧠 AI Analysis"}
+                {tab === "xorGraph" && "🔄 XOR Graph"}
+              </button>
+            ))}
           </div>
 
           {/* Content Area */}
@@ -830,13 +934,17 @@ export default function Dashboard() {
               <div className="mode-header">
                 <h2>
                   {activeTab === "timeSeries" && "📊 Real-time ECG Monitor"}
-                  {activeTab === "abnormalBeats" && "🎯 Abnormal Beat Detection"}
+                  {activeTab === "abnormalBeats" &&
+                    "🎯 Abnormal Beat Detection"}
                   {activeTab === "polarGraph" && "🌀 Polar Graph Visualization"}
-                  {activeTab === "recurrencePlot" && "📈 Recurrence/Scatter Plot"}
+                  {activeTab === "recurrencePlot" &&
+                    "📈 Recurrence/Scatter Plot"}
                   {activeTab === "aiAnalysis" && "🧠 AI Comprehensive Analysis"}
                   {activeTab === "xorGraph" && "🔄 XOR Graph Analysis"}
                 </h2>
-                {loading && <div className="loading-indicator">🔄 Loading...</div>}
+                {loading && (
+                  <div className="loading-indicator">🔄 Loading...</div>
+                )}
               </div>
 
               <div className="mode-body">

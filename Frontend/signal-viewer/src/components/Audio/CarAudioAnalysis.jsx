@@ -181,7 +181,7 @@ const CarAudioAnalysis = () => {
             processing algorithms.
           </p>
           <button className="back-btn" onClick={() => navigate("/")}>
-            ← Back to Home
+            🏠 Back to Home
           </button>
         </div>
       </div>

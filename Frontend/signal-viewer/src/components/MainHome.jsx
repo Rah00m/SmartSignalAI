@@ -34,7 +34,6 @@ const MainHome = () => {
           <ul className="card-features">
             <li>• ECG signal analysis</li>
             <li>• EEG brain monitoring</li>
-            <li>• Heart rate monitoring</li>
             <li>• Multiple visualization modes</li>
           </ul>
           <button className="card-button">Explore Medical →</button>
