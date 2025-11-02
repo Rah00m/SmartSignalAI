@@ -35,10 +35,12 @@ class CarSoundGenerator:
             t = np.linspace(0., self.duration, int(self.fs * self.duration))
             
             # Car position over time (starting from left, moving right)
-            start_pos = -car_speed * (self.duration / 2)
+            start_pos = -car_speed * (self.duration / 2) #-car_speed*6
+            # calc pos for car for each t
             car_pos_x = start_pos + car_speed * t
             
             # Distance from observer (at origin) to car
+            # self.closest_approach**2 =10^2
             distance = np.sqrt(car_pos_x**2 + self.closest_approach**2)
             
             # Radial velocity (component toward/away from observer)
@@ -67,6 +69,7 @@ class CarSoundGenerator:
             saturated_signal = np.tanh(clean_signal * self.drive)
             
             # Dynamic amplitude based on distance
+            # high distance laww amp 
             base_amplitude = 1.5
             dynamic_amplitude = base_amplitude / distance
             final_signal = saturated_signal * dynamic_amplitude

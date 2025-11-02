@@ -411,9 +411,9 @@ logger = logging.getLogger(__name__)
 
 class PatientInfo(BaseModel):
     id: str
-    age: str
-    gender: str
-    history: Optional[str] = None
+    # age: str
+    # gender: str
+    # history: Optional[str] = None
 
 class ChannelData(BaseModel):
     signal: List[float]

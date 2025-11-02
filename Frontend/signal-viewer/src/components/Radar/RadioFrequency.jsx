@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './RadioFrequency.css';
+import React, { useState, useRef, useEffect } from "react";
+import "./RadioFrequency.css";
 
 const RadioFrequency = () => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [signalType, setSignalType] = useState('SAR');
+  const [signalType, setSignalType] = useState("SAR");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState(null);
   const [processingProgress, setProcessingProgress] = useState(0);
@@ -20,105 +20,135 @@ const RadioFrequency = () => {
   // Load real SAR data from public folder
   const loadSampleData = async () => {
     try {
-      const response = await fetch('/sar_profile.csv');
+      const response = await fetch("/sar_profile.csv");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const textData = await response.text();
-      const sampleFile = new File([textData], "sar_profile.csv", { type: 'text/csv' });
+      const sampleFile = new File([textData], "sar_profile.csv", {
+        type: "text/csv",
+      });
       setSelectedFile(sampleFile);
       setAnalysisResults(null);
       console.log("Real SAR data loaded from /public/sar_profile.csv");
     } catch (error) {
       console.error("Could not load sample CSV:", error);
-      alert("Error: Could not load sar_profile.csv. Make sure it's in the /public folder and that your app is running.");
+      alert(
+        "Error: Could not load sar_profile.csv. Make sure it's in the /public folder and that your app is running."
+      );
     }
   };
 
   // Enhanced CSV parsing and analysis
   const parseAndAnalyzeCSV = (csvText) => {
-    const lines = csvText.trim().split('\n');
+    const lines = csvText.trim().split("\n");
     const header = lines[0];
-    const dataRows = lines.slice(1).filter(row => row.trim() !== '');
-    
+    const dataRows = lines.slice(1).filter((row) => row.trim() !== "");
+
     console.log(`Processing ${dataRows.length} data rows`);
-    
-    const parsedData = dataRows.map((row, index) => {
-      const columns = row.split(',').map(col => col.trim());
-      const x = parseFloat(columns[0]);
-      const y = parseFloat(columns[1]);
-      
-      if (isNaN(x) || isNaN(y)) {
-        console.warn(`Invalid data at row ${index + 2}: x=${columns[0]}, y=${columns[1]}`);
-        return null;
-      }
-      
-      return { x, y, index };
-    }).filter(point => point !== null);
+
+    const parsedData = dataRows
+      .map((row, index) => {
+        const columns = row.split(",").map((col) => col.trim());
+        const x = parseFloat(columns[0]);
+        const y = parseFloat(columns[1]);
+
+        if (isNaN(x) || isNaN(y)) {
+          console.warn(
+            `Invalid data at row ${index + 2}: x=${columns[0]}, y=${columns[1]}`
+          );
+          return null;
+        }
+
+        return { x, y, index };
+      })
+      .filter((point) => point !== null);
 
     if (parsedData.length === 0) {
       throw new Error("No valid data points found in CSV file");
     }
 
     console.log(`Successfully parsed ${parsedData.length} data points`);
-    console.log('Data range:', {
-      x: [Math.min(...parsedData.map(p => p.x)), Math.max(...parsedData.map(p => p.x))],
-      y: [Math.min(...parsedData.map(p => p.y)), Math.max(...parsedData.map(p => p.y))]
+    console.log("Data range:", {
+      x: [
+        Math.min(...parsedData.map((p) => p.x)),
+        Math.max(...parsedData.map((p) => p.x)),
+      ],
+      y: [
+        Math.min(...parsedData.map((p) => p.y)),
+        Math.max(...parsedData.map((p) => p.y)),
+      ],
     });
 
-    const intensities = parsedData.map(p => p.y);
+    const intensities = parsedData.map((p) => p.y);
 
     // Normalize data for visualization (0 to 1 range)
-    const minIntensity = Math.min(...intensities);
-    const maxIntensity = Math.max(...intensities);
-    const range = maxIntensity - minIntensity;
-    
-    const normalizedData = parsedData.map(p => ({
-      x: p.x,
-      y: range > 0 ? (p.y - minIntensity) / range : 0.5,
-      originalY: p.y
+    const minIntensity = Math.min(...intensities); // Find the minimum intensity value
+    const maxIntensity = Math.max(...intensities); // Find the maximum intensity value
+    const range = maxIntensity - minIntensity; // Compute the range for normalization
+
+    const normalizedData = parsedData.map((p) => ({
+      x: p.x, // Keep original x-coordinate
+      y: range > 0 ? (p.y - minIntensity) / range : 0.5, // Normalize y to 0-1; if all values equal, set 0.5
+      originalY: p.y, // Keep original y for reference
     }));
 
     // Analysis calculations
-    const normalizedIntensities = normalizedData.map(p => p.y);
-    const averageIntensity = normalizedIntensities.reduce((a, b) => a + b, 0) / normalizedIntensities.length;
-    const variance = normalizedIntensities.map(x => Math.pow(x - averageIntensity, 2)).reduce((a, b) => a + b, 0) / normalizedIntensities.length;
-    const stdDev = Math.sqrt(variance);
-    
+    const normalizedIntensities = normalizedData.map((p) => p.y); // Extract normalized intensity values
+
+    // Compute the mean (average) of normalized intensities
+    const averageIntensity =
+      normalizedIntensities.reduce((a, b) => a + b, 0) /
+      normalizedIntensities.length;
+
+    // Compute variance and standard deviation
+    const variance =
+      normalizedIntensities
+        .map((x) => Math.pow(x - averageIntensity, 2)) // Square differences from mean
+        .reduce((a, b) => a + b, 0) / normalizedIntensities.length; // Average squared differences
+    const stdDev = Math.sqrt(variance); // Standard deviation measures data spread
+
     // Target detection (points significantly above average)
-    const targetThreshold = averageIntensity + 2.5 * stdDev;
-    const brightTargets = normalizedIntensities.filter(intensity => intensity > targetThreshold);
-    const targetDetected = brightTargets.length > 0 && Math.max(...normalizedIntensities) > 0.7;
+    const targetThreshold = averageIntensity + 2.5 * stdDev; // Define threshold for bright targets
+    const brightTargets = normalizedIntensities.filter(
+      (intensity) => intensity > targetThreshold
+    ); // Find points above threshold
+    const targetDetected =
+      brightTargets.length > 0 && Math.max(...normalizedIntensities) > 0.7; // Confirm if target exists
 
     // Terrain classification based on signal characteristics
-    let terrainClassification = 'Unknown';
-    const maxOriginal = Math.max(...intensities);
-    const avgOriginal = intensities.reduce((a, b) => a + b, 0) / intensities.length;
-    
+    let terrainClassification = "Unknown";
+    const maxOriginal = Math.max(...intensities); // Maximum of original intensity values
+    const avgOriginal =
+      intensities.reduce((a, b) => a + b, 0) / intensities.length; // Average of original intensity values
+
+    // Classify terrain using standard deviation and average intensity
     if (stdDev > 0.25) {
-      terrainClassification = 'High Variation (Urban/Industrial Complex)';
+      terrainClassification = "High Variation (Urban/Industrial Complex)"; // Highly variable → complex terrain
     } else if (stdDev > 0.15) {
-      terrainClassification = 'Medium Variation (Mixed Terrain/Vegetation)';
+      terrainClassification = "Medium Variation (Mixed Terrain/Vegetation)"; // Medium variability → mixed terrain
     } else if (avgOriginal < -15) {
-      terrainClassification = 'Low Backscatter (Water/Smooth Surface)';
+      terrainClassification = "Low Backscatter (Water/Smooth Surface)"; // Very low signal → likely water or smooth
     } else {
-      terrainClassification = 'Low Variation (Homogeneous Surface)';
+      terrainClassification = "Low Variation (Homogeneous Surface)"; // Low variability → flat or homogeneous terrain
     }
 
     return {
-      signal_type: 'SAR',
+      signal_type: "SAR",
       analysis: {
         target_detected: targetDetected,
         surface_roughness: stdDev,
-        moisture_content: 'Estimated from backscatter',
+        moisture_content: "Estimated from backscatter",
         terrain_classification: terrainClassification,
         confidence: 0.95,
-        range_resolution: 'ICEYE Spotlight Mode',
-        azimuth_resolution: 'Sub-meter',
-        signal_quality: 'High',
+        range_resolution: "ICEYE Spotlight Mode",
+        azimuth_resolution: "Sub-meter",
+        signal_quality: "High",
         data_points: parsedData.length,
-        intensity_range: `${minIntensity.toFixed(2)} to ${maxIntensity.toFixed(2)} dB`,
-        bright_targets: brightTargets.length
+        intensity_range: `${minIntensity.toFixed(2)} to ${maxIntensity.toFixed(
+          2
+        )} dB`,
+        bright_targets: brightTargets.length,
       },
       visualization_data: {
         time_domain: normalizedData,
@@ -127,9 +157,9 @@ const RadioFrequency = () => {
           min: minIntensity,
           max: maxIntensity,
           mean: avgOriginal,
-          stdDev: stdDev
-        }
-      }
+          stdDev: stdDev,
+        },
+      },
     };
   };
 
@@ -138,28 +168,30 @@ const RadioFrequency = () => {
 
     setIsAnalyzing(true);
     setProcessingProgress(0);
-    
+
     const progressInterval = setInterval(() => {
-      setProcessingProgress(prev => Math.min(prev + 15, 90));
+      setProcessingProgress((prev) => Math.min(prev + 15, 90));
     }, 200);
-    
+
     try {
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
           const csvText = event.target.result;
-          console.log('CSV file loaded, first 200 chars:', csvText.substring(0, 200));
-          
+          console.log(
+            "CSV file loaded, first 200 chars:",
+            csvText.substring(0, 200)
+          );
+
           const results = parseAndAnalyzeCSV(csvText);
-          console.log('Analysis results:', results);
-          
+          console.log("Analysis results:", results);
+
           setAnalysisResults(results);
-          
+
           // Give canvas time to be available
           setTimeout(() => {
             visualizeSignal(results);
           }, 100);
-          
         } catch (e) {
           console.error("Error analyzing file:", e);
           alert(`Failed to analyze the CSV file: ${e.message}`);
@@ -172,7 +204,7 @@ const RadioFrequency = () => {
           }, 1000);
         }
       };
-      
+
       reader.onerror = () => {
         console.error("Error reading file");
         alert("Error reading the file.");
@@ -180,11 +212,10 @@ const RadioFrequency = () => {
         setIsAnalyzing(false);
         setProcessingProgress(0);
       };
-      
-      reader.readAsText(selectedFile);
 
+      reader.readAsText(selectedFile);
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error("Analysis error:", error);
       alert("An error occurred during analysis. Check the console.");
       clearInterval(progressInterval);
       setProcessingProgress(0);
@@ -195,14 +226,14 @@ const RadioFrequency = () => {
   const visualizeSignal = (results) => {
     const canvas = canvasRef.current;
     if (!canvas || !results || !results.visualization_data) {
-      console.warn('Canvas or results not available for visualization');
+      console.warn("Canvas or results not available for visualization");
       return;
     }
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     const width = canvas.width;
     const height = canvas.height;
-    
+
     console.log(`Drawing on canvas: ${width}x${height}`);
 
     // Clear canvas
@@ -213,17 +244,17 @@ const RadioFrequency = () => {
     const plotHeight = height - 2 * padding;
 
     // Draw background
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
     ctx.fillRect(0, 0, width, height);
-    
+
     // Draw plot area background
-    ctx.fillStyle = 'rgba(30, 41, 59, 0.8)';
+    ctx.fillStyle = "rgba(30, 41, 59, 0.8)";
     ctx.fillRect(padding, padding, plotWidth, plotHeight);
-    
+
     // Draw grid
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.2)";
     ctx.lineWidth = 1;
-    
+
     // Vertical grid lines
     for (let i = 0; i <= 10; i++) {
       const x = padding + (i / 10) * plotWidth;
@@ -232,7 +263,7 @@ const RadioFrequency = () => {
       ctx.lineTo(x, padding + plotHeight);
       ctx.stroke();
     }
-    
+
     // Horizontal grid lines
     for (let i = 0; i <= 5; i++) {
       const y = padding + (i / 5) * plotHeight;
@@ -241,23 +272,23 @@ const RadioFrequency = () => {
       ctx.lineTo(padding + plotWidth, y);
       ctx.stroke();
     }
-    
+
     // Plot the signal data
     const data = results.visualization_data.time_domain;
     console.log(`Plotting ${data.length} data points`);
 
     if (data && data.length > 0) {
       // Draw signal line
-      ctx.strokeStyle = '#06b6d4';
+      ctx.strokeStyle = "#06b6d4";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      
+
       let pointsDrawn = 0;
       data.forEach((point, index) => {
-        if (point && typeof point.y === 'number' && !isNaN(point.y)) {
+        if (point && typeof point.y === "number" && !isNaN(point.y)) {
           const x = padding + (index / (data.length - 1)) * plotWidth;
-          const y = padding + plotHeight - (point.y * plotHeight); // y is already normalized [0,1]
-          
+          const y = padding + plotHeight - point.y * plotHeight; // y is already normalized [0,1]
+
           if (index === 0) {
             ctx.moveTo(x, y);
           } else {
@@ -266,69 +297,74 @@ const RadioFrequency = () => {
           pointsDrawn++;
         }
       });
-      
+
       ctx.stroke();
       console.log(`Drew ${pointsDrawn} points on canvas`);
-      
+
       // Highlight bright targets
-      ctx.fillStyle = '#f59e0b';
+      ctx.fillStyle = "#f59e0b";
       data.forEach((point, index) => {
-        if (point && point.y > 0.8) { // Highlight very bright points
+        if (point && point.y > 0.8) {
+          // Highlight very bright points
           const x = padding + (index / (data.length - 1)) * plotWidth;
-          const y = padding + plotHeight - (point.y * plotHeight);
-          
+          const y = padding + plotHeight - point.y * plotHeight;
+
           ctx.beginPath();
           ctx.arc(x, y, 3, 0, 2 * Math.PI);
           ctx.fill();
         }
       });
     }
-    
+
     // Add labels and title
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 14px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText('Real SAR Backscatter Profile - West Angelas Mine', width / 2, 25);
-    
-    ctx.font = '12px Inter';
-    ctx.fillText('Range/Distance →', width / 2, height - 10);
-    
+    ctx.fillStyle = "white";
+    ctx.font = "bold 14px Inter";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "Real SAR Backscatter Profile - West Angelas Mine",
+      width / 2,
+      25
+    );
+
+    ctx.font = "12px Inter";
+    ctx.fillText("Range/Distance →", width / 2, height - 10);
+
     // Y-axis label
     ctx.save();
     ctx.translate(15, height / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText('← Normalized Backscatter Intensity', 0, 0);
+    ctx.fillText("← Normalized Backscatter Intensity", 0, 0);
     ctx.restore();
-    
+
     // Add scale indicators
-    ctx.font = '10px Inter';
-    ctx.textAlign = 'right';
-    ctx.fillText('High', padding - 5, padding + 10);
-    ctx.fillText('Low', padding - 5, padding + plotHeight - 5);
-    
-    console.log('Visualization complete');
+    ctx.font = "10px Inter";
+    ctx.textAlign = "right";
+    ctx.fillText("High", padding - 5, padding + 10);
+    ctx.fillText("Low", padding - 5, padding + plotHeight - 5);
+
+    console.log("Visualization complete");
   };
-  
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
       setAnalysisResults(null);
-      console.log('File selected:', file.name, 'Size:', file.size);
+      console.log("File selected:", file.name, "Size:", file.size);
     }
   };
-  
+
   const resetAnalysis = () => {
     setSelectedFile(null);
     setAnalysisResults(null);
     setProcessingProgress(0);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
-    
+
     // Clear canvas
     if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext('2d');
+      const ctx = canvasRef.current.getContext("2d");
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
   };
@@ -339,37 +375,55 @@ const RadioFrequency = () => {
         <h2>📡 SAR Signal Processor</h2>
         <p>Analyze real SAR backscatter data with advanced signal processing</p>
       </div>
-      
+
       <div className="signal-type-selector">
         <div className="type-tabs">
-          <button className={`type-tab ${signalType === 'SAR' ? 'active' : ''}`} onClick={() => setSignalType('SAR')}>
+          <button
+            className={`type-tab ${signalType === "SAR" ? "active" : ""}`}
+            onClick={() => setSignalType("SAR")}
+          >
             🛰️ SAR Signals
           </button>
         </div>
         <div className="type-info">
-          <span>Synthetic Aperture Radar - Real mine site backscatter analysis</span>
+          <span>
+            Synthetic Aperture Radar - Real mine site backscatter analysis
+          </span>
         </div>
       </div>
-      
-      <div className={`upload-area ${selectedFile ? 'file-selected' : ''}`} onClick={() => fileInputRef.current?.click()}>
-        <input ref={fileInputRef} type="file" accept=".csv,.txt" onChange={handleFileUpload} style={{ display: 'none' }} />
+
+      <div
+        className={`upload-area ${selectedFile ? "file-selected" : ""}`}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.txt"
+          onChange={handleFileUpload}
+          style={{ display: "none" }}
+        />
         {selectedFile ? (
           <div className="file-info">
             <div className="file-icon">📄</div>
             <div className="file-details">
               <div className="file-name">{selectedFile.name}</div>
-              <div className="file-size">{(selectedFile.size / 1024).toFixed(1)} KB</div>
+              <div className="file-size">
+                {(selectedFile.size / 1024).toFixed(1)} KB
+              </div>
             </div>
           </div>
         ) : (
           <div className="upload-prompt">
             <div className="upload-icon">📁</div>
             <p>Drop your SAR CSV file here or click to browse</p>
-            <div className="file-types">Supported: CSV, TXT files with x,y data</div>
+            <div className="file-types">
+              Supported: CSV, TXT files with x,y data
+            </div>
           </div>
         )}
       </div>
-      
+
       <div className="sample-data-section">
         <button className="sample-data-btn" onClick={loadSampleData}>
           📊 Load Real SAR Data (West Angelas Mine)
@@ -378,10 +432,14 @@ const RadioFrequency = () => {
           ICEYE spotlight mode data - Real mining site backscatter profile
         </div>
       </div>
-      
+
       <div className="action-buttons">
-        <button className="analyze-button" onClick={analyzeSignal} disabled={!selectedFile || isAnalyzing}>
-          {isAnalyzing ? '🔄 Processing...' : '🔬 Analyze SAR Signal'}
+        <button
+          className="analyze-button"
+          onClick={analyzeSignal}
+          disabled={!selectedFile || isAnalyzing}
+        >
+          {isAnalyzing ? "🔄 Processing..." : "🔬 Analyze SAR Signal"}
         </button>
         <button className="reset-button" onClick={resetAnalysis}>
           🔄 Reset
@@ -391,7 +449,10 @@ const RadioFrequency = () => {
       {isAnalyzing && (
         <div className="processing-status">
           <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${processingProgress}%` }}></div>
+            <div
+              className="progress-fill"
+              style={{ width: `${processingProgress}%` }}
+            ></div>
           </div>
           <p>Processing SAR signal... {processingProgress}%</p>
         </div>
@@ -401,49 +462,71 @@ const RadioFrequency = () => {
         <>
           <div className="visualization-section">
             <h3>📈 Signal Visualization</h3>
-            <canvas 
-              ref={canvasRef} 
-              width={800} 
-              height={400} 
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={400}
               className="signal-canvas"
-              style={{ display: 'block', margin: '0 auto', border: '1px solid #334155' }}
+              style={{
+                display: "block",
+                margin: "0 auto",
+                border: "1px solid #334155",
+              }}
             />
           </div>
-          
+
           <div className="analysis-results">
             <div className="results-header">
               <h3>📋 Analysis Results</h3>
-              <div className="signal-type-badge">{analysisResults.signal_type}</div>
+              <div className="signal-type-badge">
+                {analysisResults.signal_type}
+              </div>
             </div>
-            
+
             <div className="result-grid">
               <div className="result-item">
                 <span className="result-label">Target Detection:</span>
-                <span className={`result-value ${analysisResults.analysis.target_detected ? 'positive' : 'negative'}`}>
-                  {analysisResults.analysis.target_detected ? '✅ Bright Targets Detected' : '❌ No Significant Targets'}
+                <span
+                  className={`result-value ${
+                    analysisResults.analysis.target_detected
+                      ? "positive"
+                      : "negative"
+                  }`}
+                >
+                  {analysisResults.analysis.target_detected
+                    ? "✅ Bright Targets Detected"
+                    : "❌ No Significant Targets"}
                 </span>
               </div>
-              
+
               <div className="result-item">
                 <span className="result-label">Surface Roughness:</span>
-                <span className="result-value">{analysisResults.analysis.surface_roughness.toFixed(3)}</span>
+                <span className="result-value">
+                  {analysisResults.analysis.surface_roughness.toFixed(3)}
+                </span>
               </div>
-              
+
               <div className="result-item">
                 <span className="result-label">Terrain Classification:</span>
-                <span className="result-value">{analysisResults.analysis.terrain_classification}</span>
+                <span className="result-value">
+                  {analysisResults.analysis.terrain_classification}
+                </span>
               </div>
-              
+
               <div className="result-item">
                 <span className="result-label">Data Points:</span>
-                <span className="result-value">{analysisResults.analysis.data_points}</span>
+                <span className="result-value">
+                  {analysisResults.analysis.data_points}
+                </span>
               </div>
-              
+
               <div className="result-item">
                 <span className="result-label">Intensity Range:</span>
-                <span className="result-value">{analysisResults.analysis.intensity_range}</span>
+                <span className="result-value">
+                  {analysisResults.analysis.intensity_range}
+                </span>
               </div>
-              
+
               <div className="result-item">
                 <span className="result-label">Confidence:</span>
                 <span className="result-value confidence">
@@ -459,13 +542,6 @@ const RadioFrequency = () => {
 };
 
 export default RadioFrequency;
-
-
-
-
-
-
-
 
 // import React, { useState, useRef } from 'react';
 // import './RadioFrequency.css';
@@ -512,7 +588,7 @@ export default RadioFrequency;
 //     const intensities = parsedData.map(p => p.y);
 
 //     // --- Real Data Analysis ---
-    
+
 //     // a) Normalize Data: Map the dB values to a [0, 1] range for visualization and consistent analysis.
 //     const minIntensity = Math.min(...intensities);
 //     const maxIntensity = Math.max(...intensities);
@@ -521,7 +597,7 @@ export default RadioFrequency;
 //       y: (p.y - minIntensity) / (maxIntensity - minIntensity)
 //     }));
 //     const normalizedIntensities = normalizedData.map(p => p.y);
-    
+
 //     // b) Target Detection: A simple target is a point significantly brighter than the average.
 //     const averageIntensity = normalizedIntensities.reduce((a, b) => a + b, 0) / normalizedIntensities.length;
 //     const stdDev = Math.sqrt(normalizedIntensities.map(x => Math.pow(x - averageIntensity, 2)).reduce((a, b) => a + b, 0) / normalizedIntensities.length);
@@ -567,7 +643,7 @@ export default RadioFrequency;
 //     const progressInterval = setInterval(() => {
 //       setProcessingProgress(prev => Math.min(prev + 10, 90));
 //     }, 100);
-    
+
 //     // We perform the analysis entirely on the client-side using FileReader.
 //     try {
 //       const reader = new FileReader();
@@ -616,7 +692,7 @@ export default RadioFrequency;
 
 //     ctx.fillStyle = 'rgba(30, 41, 59, 0.8)';
 //     ctx.fillRect(padding, padding, plotWidth, plotHeight);
-    
+
 //     ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
 //     ctx.lineWidth = 1;
 //     for (let i = 0; i <= 10; i++) {
@@ -625,7 +701,7 @@ export default RadioFrequency;
 //         ctx.beginPath(); ctx.moveTo(xGrid, padding); ctx.lineTo(xGrid, padding + plotHeight); ctx.stroke();
 //         ctx.beginPath(); ctx.moveTo(padding, yGrid); ctx.lineTo(padding + plotWidth, yGrid); ctx.stroke();
 //     }
-    
+
 //     // The data is now pre-normalized to [0, 1]
 //     const data = results.visualization_data.time_domain;
 
@@ -644,7 +720,7 @@ export default RadioFrequency;
 //         });
 //         ctx.stroke();
 //     }
-    
+
 //     ctx.fillStyle = 'white';
 //     ctx.font = '12px Inter';
 //     ctx.textAlign = 'center';
@@ -655,7 +731,7 @@ export default RadioFrequency;
 //     ctx.fillText('Normalized Intensity', 0, 0);
 //     ctx.restore();
 //   };
-  
+
 //   const handleFileUpload = (event) => {
 //     const file = event.target.files[0];
 //     if (file) {
@@ -663,7 +739,7 @@ export default RadioFrequency;
 //       setAnalysisResults(null);
 //     }
 //   };
-  
+
 //   const resetAnalysis = () => {
 //     setSelectedFile(null);
 //     setAnalysisResults(null);
@@ -765,14 +841,6 @@ export default RadioFrequency;
 
 // export default RadioFrequency;
 
-
-
-
-
-
-
-
-
 // import React, { useState, useRef, useEffect } from 'react';
 // import './RadioFrequency.css';
 
@@ -850,8 +918,8 @@ export default RadioFrequency;
 
 //   const loadSampleData = () => {
 //     const sampleFile = new File(
-//       [generateSampleData(signalType)], 
-//       sampleData[signalType].filename, 
+//       [generateSampleData(signalType)],
+//       sampleData[signalType].filename,
 //       { type: 'text/csv' }
 //     );
 //     setSelectedFile(sampleFile);
@@ -871,15 +939,15 @@ export default RadioFrequency;
 //     // This simulates a transect over: water -> ship -> vegetated land
 //     let csvContent = 'range_pixel,backscatter_intensity\n';
 //     const samples = 1000;
-    
+
 //     // Define characteristics of the simulated terrain
 //     const waterLevel = 0.05;    // Low backscatter for smooth water
 //     const landLevel = 0.4;      // Medium backscatter for rough land
 //     const targetPeak = 0.95;    // High backscatter for a ship/bridge
-    
+
 //     for (let i = 0; i < samples; i++) {
 //         let intensity = 0;
-        
+
 //         if (i < 400) {
 //             // Segment 1: Smooth Water (low, stable backscatter)
 //             intensity = waterLevel + (Math.random() - 0.5) * 0.03;
@@ -895,41 +963,40 @@ export default RadioFrequency;
 //             // Transition zones
 //             intensity = waterLevel + (Math.random() - 0.5) * 0.05;
 //         }
-        
+
 //         // Ensure intensity is between 0 and 1
 //         intensity = Math.max(0, Math.min(1, intensity));
-        
+
 //         csvContent += `${i},${intensity.toFixed(6)}\n`;
 //     }
-    
+
 //     return csvContent;
 //  };
-
 
 //   const generateCosmicData = () => {
 //     let csvContent = 'time,amplitude,frequency,doppler_shift\n';
 //     const samples = 2000;
-    
+
 //     for (let i = 0; i < samples; i++) {
 //       const t = i / 10; // 10 Hz sampling for pulsar
 //       const pulsarPeriod = 1.337; // seconds (PSR B1919+21)
-      
+
 //       // Simulate pulsar pulse
 //       const pulsePhase = (t % pulsarPeriod) / pulsarPeriod;
 //       const pulseProfile = Math.exp(-Math.pow((pulsePhase - 0.5) * 10, 2));
-      
+
 //       // Add cosmic background and noise
 //       const cosmicBackground = 0.1;
 //       const noise = (Math.random() - 0.5) * 0.05;
 //       const amplitude = pulseProfile * 0.5 + cosmicBackground + noise;
-      
+
 //       // Simulate Doppler shift due to Earth's motion
 //       const dopplerShift = 0.1 * Math.sin(2 * Math.PI * t / 86400); // Daily variation
 //       const frequency = 1400e6 + dopplerShift;
-      
+
 //       csvContent += `${t},${amplitude.toFixed(6)},${frequency.toFixed(0)},${dopplerShift.toFixed(6)}\n`;
 //     }
-    
+
 //     return csvContent;
 //   };
 
@@ -984,7 +1051,7 @@ export default RadioFrequency;
 
 // const generateSimulatedResults = () => {
 //     // This function will now ANALYZE the generated data instead of using hardcoded values.
-    
+
 //     // 1. First, parse the CSV data we created in generateSARData()
 //     const csvData = generateSARData();
 //     const rows = csvData.split('\n').slice(1); // Slit into rows, skip header
@@ -1005,7 +1072,7 @@ export default RadioFrequency;
 //     // b) Surface Analysis: Calculate statistics for the first and second halves of the data
 //     const firstHalf = intensities.slice(0, Math.floor(intensities.length / 2));
 //     const secondHalf = intensities.slice(Math.floor(intensities.length / 2));
-    
+
 //     const avgFirstHalf = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
 //     const stdDevFirstHalf = Math.sqrt(firstHalf.map(x => Math.pow(x - avgFirstHalf, 2)).reduce((a, b) => a + b, 0) / firstHalf.length);
 
@@ -1068,7 +1135,7 @@ export default RadioFrequency;
 //     // Draw grid
 //     ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
 //     ctx.lineWidth = 1;
-    
+
 //     for (let i = 0; i <= 10; i++) {
 //       const x = padding + (i / 10) * plotWidth;
 //       // Get the data array to plot
@@ -1077,12 +1144,12 @@ export default RadioFrequency;
 // // ... inside the forEach loop ...
 // const intensity = point.y; // Assuming point.y holds the backscatter intensity
 // const y = padding + plotHeight - (intensity * plotHeight); // Map [0, 1] to the plot height
-      
+
 //       ctx.beginPath();
 //       ctx.moveTo(x, padding);
 //       ctx.lineTo(x, padding + plotHeight);
 //       ctx.stroke();
-      
+
 //       ctx.beginPath();
 //       ctx.moveTo(padding, y);
 //       ctx.lineTo(padding + plotWidth, y);
@@ -1090,8 +1157,8 @@ export default RadioFrequency;
 //     }
 
 //     // Plot signal data
-//     const data = signalType === 'SAR' ? 
-//       results.visualization_data.time_domain : 
+//     const data = signalType === 'SAR' ?
+//       results.visualization_data.time_domain :
 //       results.visualization_data.time_series;
 
 //     if (data && data.length > 0) {
@@ -1102,7 +1169,7 @@ export default RadioFrequency;
 //       data.forEach((point, index) => {
 //         const x = padding + (index / (data.length - 1)) * plotWidth;
 //         const y = padding + plotHeight - (point.y + 1) / 2 * plotHeight;
-        
+
 //         if (index === 0) {
 //           ctx.moveTo(x, y);
 //         } else {
@@ -1117,13 +1184,13 @@ export default RadioFrequency;
 //     ctx.fillStyle = 'white';
 //     ctx.font = '12px Inter';
 //     ctx.textAlign = 'center';
-    
+
 //     ctx.fillText(
 //       signalType === 'SAR' ? 'Time Domain (SAR Return)' : 'Time Series (Pulsar Signal)',
 //       width / 2,
 //       height - 10
 //     );
-    
+
 //     ctx.save();
 //     ctx.translate(15, height / 2);
 //     ctx.rotate(-Math.PI / 2);
@@ -1151,13 +1218,13 @@ export default RadioFrequency;
 //       {/* Signal Type Selector */}
 //       <div className="signal-type-selector">
 //         <div className="type-tabs">
-//           <button 
+//           <button
 //             className={`type-tab ${signalType === 'SAR' ? 'active' : ''}`}
 //             onClick={() => setSignalType('SAR')}
 //           >
 //             🛰️ SAR Signals
 //           </button>
-//           <button 
+//           <button
 //             className={`type-tab ${signalType === 'Cosmic' ? 'active' : ''}`}
 //             onClick={() => setSignalType('Cosmic')}
 //           >
@@ -1174,7 +1241,7 @@ export default RadioFrequency;
 //       </div>
 
 //       {/* Upload Area */}
-//       <div 
+//       <div
 //         className={`upload-area ${selectedFile ? 'file-selected' : ''}`}
 //         onDrop={handleDrop}
 //         onDragOver={handleDragOver}
@@ -1187,7 +1254,7 @@ export default RadioFrequency;
 //           onChange={handleFileUpload}
 //           style={{ display: 'none' }}
 //         />
-        
+
 //         {selectedFile ? (
 //           <div className="file-info">
 //             <div className="file-icon">📄</div>
@@ -1237,8 +1304,8 @@ export default RadioFrequency;
 //       {isAnalyzing && (
 //         <div className="processing-status">
 //           <div className="progress-bar">
-//             <div 
-//               className="progress-fill" 
+//             <div
+//               className="progress-fill"
 //               style={{ width: `${processingProgress}%` }}
 //             ></div>
 //           </div>
@@ -1250,9 +1317,9 @@ export default RadioFrequency;
 //       {analysisResults && (
 //         <div className="visualization-section">
 //           <h3>📈 Signal Visualization</h3>
-//           <canvas 
-//             ref={canvasRef} 
-//             width={800} 
+//           <canvas
+//             ref={canvasRef}
+//             width={800}
 //             height={300}
 //             className="signal-canvas"
 //           />

@@ -102,115 +102,79 @@
 # # http://127.0.0.1:8000/ecg/mode1/channels?patient=patient001&recording=s0010_re
 
 
+from fastapi import APIRouter
+import wfdb
+import pandas as pd
+import os
 
 # uvicorn app.main:app --reload
 
-import os
-import wfdb
-import pandas as pd
-import requests
-from fastapi import APIRouter
-
+# إنشاء router جديد
 router = APIRouter()
 
-CACHE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\cache"
-
-os.makedirs(CACHE_PATH, exist_ok=True)
-
-
+BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\ptb-diagnostic-ecg-database-1.0.0"
 
 def get_diagnosis(patient: str, recording: str):
-    """
-    Reads diagnosis text from local cache if available,
-    otherwise downloads from PhysioNet and caches it.
-    """
-    patient_folder = os.path.join(CACHE_PATH, patient)
-    hea_path = os.path.join(patient_folder, f"{recording}.hea")
-
+    hea_path = os.path.join(BASE_PATH, patient, f"{recording}.hea")
+    diagnosis_lines = []
     if os.path.exists(hea_path):
         with open(hea_path, "r", encoding="utf-8", errors="ignore") as f:
-            return _extract_diagnosis_lines(f.readlines())
-
-    base_url = f"https://physionet.org/files/ptbdb/1.0.0/{patient}/{recording}.hea"
-    response = requests.get(base_url)
-    if response.status_code == 200:
-        os.makedirs(patient_folder, exist_ok=True)
-        with open(hea_path, "w", encoding="utf-8") as f:
-            f.write(response.text)
-        return _extract_diagnosis_lines(response.text.split("\n"))
+            capture = False
+            for line in f:
+                if line.startswith("# Diagnose:"):
+                    capture = True
+                    diagnosis_lines.append(line.strip("# ").strip())
+                elif capture:
+                    if line.startswith("#") and line.strip() != "#":
+                        diagnosis_lines.append(line.strip("# ").strip())
+                    else:
+                        break
     else:
-        return f"Error fetching diagnosis: status {response.status_code}"
-
-
-def _extract_diagnosis_lines(lines):
-    """Helper function to parse diagnosis lines from .hea text."""
-    diagnosis_lines = []
-    capture = False
-    for line in lines:
-        if line.startswith("# Diagnose:"):
-            capture = True
-            diagnosis_lines.append(line.strip("# ").strip())
-        elif capture:
-            if line.startswith("#") and line.strip() != "#":
-                diagnosis_lines.append(line.strip("# ").strip())
-            else:
-                break
+        return "Diagnosis file not found."
+    
     return "\n".join(diagnosis_lines) if diagnosis_lines else "No diagnosis found."
-
-
-
-def load_record(patient: str, recording: str):
-    """
-    Loads a WFDB record from local cache if available,
-    otherwise downloads it from PhysioNet and caches it.
-    """
-    patient_folder = os.path.join(CACHE_PATH, patient)
-    os.makedirs(patient_folder, exist_ok=True)
-
-    local_record_path = os.path.join(patient_folder, recording)
-    dat_path = local_record_path + ".dat"
-    hea_path = local_record_path + ".hea"
-
-    if os.path.exists(dat_path) and os.path.exists(hea_path):
-        return wfdb.rdrecord(local_record_path)
-
-    print(f"📥 Downloading {recording} for {patient} from PhysioNet...")
-    record = wfdb.rdrecord(recording, pn_dir=f"ptbdb/1.0.0/{patient}")
-    wfdb.wrsamp(local_record_path, fs=record.fs, units=record.units,
-                sig_name=record.sig_name, p_signal=record.p_signal)
-
-    print(f"✅ Cached: {local_record_path}")
-    return record
-
 
 
 @router.get("/channels")
 def get_channels(patient: str, recording: str):
+
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    
+    if not os.path.exists(record_path + ".dat"):
+        return {"error": "Invalid recording path."}
+    
     try:
-        record = load_record(patient, recording)
+        record = wfdb.rdrecord(record_path)  
         return {"channels": record.sig_name}
     except Exception as e:
         return {"error": f"Error reading record: {str(e)}"}
 
 
-
 @router.get("/signal")
 def get_signal(patient: str, recording: str, channel: str, offset: int = 0, length: int = 3000):
-    try:
-        record = load_record(patient, recording)
-        if channel not in record.sig_name:
-            return {"error": f"Invalid channel name: {channel}. Available: {record.sig_name}"}
 
-        df = pd.DataFrame(record.p_signal, columns=record.sig_name)
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    
+    if not os.path.exists(record_path + ".dat"):
+        return {"error": "Invalid recording path."}
+
+    try:
+        record = wfdb.rdrecord(record_path) 
+
+        if channel not in record.sig_name:
+            return {"error": f"Invalid channel name: {channel}. Available channels: {record.sig_name}"}
+
+        df = pd.DataFrame(record.p_signal, columns=record.sig_name)  
+        
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
-
+        
         end_index = min(offset + length, total_length)
-        y = df[channel][offset:end_index].tolist()
-        x = list(range(offset, offset + len(y)))
+        y = df[channel][offset:end_index].tolist()  
+        x = list(range(offset, offset + len(y)))  
 
-        diagnosis = get_diagnosis(patient, recording)
+        diagnosis = get_diagnosis(patient, recording)  
 
         return {
             "patient": patient,
@@ -223,52 +187,73 @@ def get_signal(patient: str, recording: str, channel: str, offset: int = 0, leng
             "x": x,
             "y": y
         }
-
     except Exception as e:
         return {"error": f"Error processing signal: {str(e)}"}
 
 
 @router.get("/full-signal")
-def get_full_signal(patient: str, recording: str, channel: str):
+def get_full_signal_for_mode1(patient: str, recording: str, channel: str):
+
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    
+    if not os.path.exists(record_path + ".dat"):
+        return {"error": "Invalid recording path."}
+
     try:
-        record = load_record(patient, recording)
-
-        if channel not in record.sig_name:
-            return {"error": f"Invalid channel: {channel}. Available: {record.sig_name}"}
-
+        record = wfdb.rdrecord(record_path)
+        
+        available_channels_lower = [ch.lower() for ch in record.sig_name]
+        channel_lower = channel.lower()
+        
+        if channel_lower not in available_channels_lower:
+            return {"error": f"Invalid channel: {channel}. Available channels: {record.sig_name}"}
+        
+        actual_channel_name = next((ch for ch in record.sig_name if ch.lower() == channel_lower), channel)
+        
         df = pd.DataFrame(record.p_signal, columns=record.sig_name)
-        y = df[channel].tolist()
-        x = list(range(len(y)))
-
+        full_signal = df[actual_channel_name].tolist()
+        
+        time_axis = list(range(len(full_signal)))
+        
         diagnosis = get_diagnosis(patient, recording)
 
         return {
             "patient": patient,
             "recording": recording,
             "channel": channel,
-            "total_length": len(y),
+            "total_length": len(full_signal),
             "diagnosis": diagnosis,
-            "x": x,
-            "y": y
+            "x": time_axis,
+            "y": full_signal
         }
-
+        
     except Exception as e:
         return {"error": f"Error processing full signal: {str(e)}"}
 
 
-
 @router.get("/all-signals")
 def get_all_signals(patient: str, recording: str, offset: int = 0, length: int = 1000):
-    try:
-        record = load_record(patient, recording)
-        df = pd.DataFrame(record.p_signal, columns=record.sig_name)
 
+    record_path = os.path.join(BASE_PATH, patient, recording)
+    
+    if not os.path.exists(record_path + ".dat"):
+        return {"error": "Invalid recording path."}
+
+    try:
+        record = wfdb.rdrecord(record_path)
+        
+        signals = {}
+        df = pd.DataFrame(record.p_signal, columns=record.sig_name)
+        
         total_length = len(df)
         if offset >= total_length:
             return {"error": f"Offset {offset} exceeds signal length {total_length}"}
-
+        
         end_index = min(offset + length, total_length)
-        signals = {ch: df[ch][offset:end_index].tolist() for ch in record.sig_name}
+        
+        for channel in record.sig_name:
+            signals[channel] = df[channel][offset:end_index].tolist()
+        
         diagnosis = get_diagnosis(patient, recording)
 
         return {
@@ -281,6 +266,5 @@ def get_all_signals(patient: str, recording: str, offset: int = 0, length: int =
             "signals": signals,
             "available_channels": record.sig_name
         }
-
     except Exception as e:
         return {"error": f"Error processing signals: {str(e)}"}
