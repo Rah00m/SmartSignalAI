@@ -51,7 +51,7 @@ export default function Mode6() {
 
       const jsonData = await response.json();
 
-      if (jsonData.signal || jsonData.ecg_signal) {
+      if (jsonData.signal || jsonData.ecg_signal || jsonData.y) {
         console.log("✅ ECG data received for XOR");
 
         const processedData = processECGData(jsonData, channels[0]);
@@ -67,7 +67,7 @@ export default function Mode6() {
     }
   }, [selectedPatient, selectedRecording, channels]);
 
-  // محاولة جلب البيانات من Mode 2
+  
   const tryMode2Data = useCallback(async () => {
     try {
       const apiUrl = `http://127.0.0.1:8000/ecg/mode2/analyze-optimized?patient=${selectedPatient}&recording=${selectedRecording}&channel=${channels[0]}&threshold=0.05&max_beats=100`;
@@ -95,10 +95,14 @@ export default function Mode6() {
     }
   }, [selectedPatient, selectedRecording, channels]);
 
-  // معالجة بيانات Mode 1
+
   const processECGData = useCallback((data, channel) => {
-    const signal = data.signal || data.ecg_signal || [];
-    const samplingRate = data.sampling_rate || 1000;
+    const signal = data.signal || data.ecg_signal || data.y || [];
+    const samplingRate = Number(data.sampling_rate);
+
+    if (!Number.isFinite(samplingRate) || samplingRate <= 0) {
+      throw new Error("Invalid sampling rate from backend");
+    }
 
     return {
       signals: [signal],
@@ -152,9 +156,9 @@ export default function Mode6() {
         const prevVal = prevChannelData[i];
 
         if (Math.abs(currentVal - prevVal) < similarityThreshold) {
-          result.push(0); // متشابهة → تختفي
+          result.push(0); 
         } else {
-          result.push(currentVal); // مختلفة → تظهر
+          result.push(currentVal); 
           differentPoints++;
         }
       }
