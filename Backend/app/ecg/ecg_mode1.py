@@ -7,7 +7,7 @@ import os
 
 router = APIRouter()
 
-BASE_PATH = r"E:\OneDrive\المستندات\SBE\DSP\SmartSignalAI\Backend\app\data\ptb-diagnostic-ecg-database-1.0.0"
+BASE_PATH = #your path
 
 def get_diagnosis(patient: str, recording: str):
     hea_path = os.path.join(BASE_PATH, patient, f"{recording}.hea")
@@ -118,6 +118,7 @@ def get_full_signal_for_mode1(patient: str, recording: str, channel: str):
             "channel": channel,
             "total_length": len(full_signal),
             "diagnosis": diagnosis,
+            "sampling_rate": record.fs,
             "x": time_axis,
             "y": full_signal
         }
